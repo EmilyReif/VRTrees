@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/shaders">
+        <file>quad.vert</file>
+        <file>deferredShadingFirst.vert</file>
+        <file>deferredShadingFirst.frag</file>
+        <file>deferredShadingSecond.frag</file>
+    </qresource>
+</RCC>

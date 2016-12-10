@@ -1,0 +1,7 @@
+Final Project Proposal
+
+ereif, murbany, zdixon
+
+L Systems: Programatically Generated Wilderness
+
+Our project will be an exploration of l system grammer to procecdurally create plant life to be rendered 3-dimensionally using existing cone and cylineder shapes. In addition to the creation of grammar rules, the interpretation will dicatate the different types of trees that can be created. The goal is to use a stochastic grammar to better recretae natural plant life. For the actual foliage (which will be represented by the leaf nodes of the grammar) the goal will be to use a texture sheet for each set of leaves and buds, whereas the cones and cylinder will ideally have a real wood texture. To prepare for more complicated l system models (such as trees and other plants), we will first implement existing algae models to ensure the model is feasible. A streatch goal would be to simulate walking through a generated forest in VR, but complications include massive polygonal rendering, and dealing with the interface between our software and the VR hardware.
