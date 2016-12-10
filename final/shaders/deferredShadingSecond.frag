@@ -61,9 +61,9 @@ void main(){
     float attFn = (attConstant + attLinear * d + attQuadratic * d*d);
     vec4 diff = diffuseComponent * diffuseColor.xyzz;
     vec4 spec = specComponent* specColor.xyzz;
-    float amb = vec4(0.0);
+    vec4 amb = vec4(0.0);
     if (diffuseIntensity > 0) {
-        amb = diffuseColor * 0.1;
+        amb = vec4(diffuseColor, 1.0) * 0.1;
     }
 
 //    vec4 specAndDiffuse = (diff + spec + amb) * min(lightIntensity / attFn, 1);
