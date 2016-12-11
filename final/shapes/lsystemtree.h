@@ -29,7 +29,7 @@ class LSystemTree
 public:
     LSystemTree(std::map<char, lSystemRule> rules);
     virtual ~LSystemTree();
-    std::vector<float> makeBranch(int recursionDepth, int heightTesselation, int thetaTesselation, float radius, float height, glm::vec3 scale, float angleX, float angleZ, float translation);
+    std::vector<float> makeBranch(int recursionDepth, int heightTesselation, int thetaTesselation, float radius, float height, vec3 scale, float angleX, float angleZ, float translation);
 
 protected:
     virtual void setVertexData();

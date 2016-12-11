@@ -34,10 +34,10 @@ std::vector<float> Cone::createVertsVector(int heightTesselation, int thetaTesse
             verts.push_back(radius*heightStep*(linearScale - 1) * std::sin(-thetaStep*j)); // Z
 
             // Top vertex normal
-            glm::vec3 normal = glm::vec3(2/(std::sqrt(5)) * std::cos(-thetaStep*j),
+            vec3 normal = vec3(2/(std::sqrt(5)) * std::cos(-thetaStep*j),
                                          1/(std::sqrt(5)),
                                          2/(std::sqrt(5)) * std::sin(-thetaStep*j));
-            normal = glm::normalize(normal);
+            normal = normalize(normal);
             verts.push_back(normal.x);
             verts.push_back(normal.y);
             verts.push_back(normal.z);

@@ -18,7 +18,7 @@ Cylinder:: ~Cylinder()
 {
 }
 
-float Cylinder::enforceBoundsCap(glm::vec4 eyeP, glm::vec4 d, float t) {
+float Cylinder::enforceBoundsCap(vec4 eyeP, vec4 d, float t) {
     float x = eyeP.x + d.x * t;
     float z = eyeP.z + d.z * t;
 
@@ -28,7 +28,7 @@ float Cylinder::enforceBoundsCap(glm::vec4 eyeP, glm::vec4 d, float t) {
     return t;
 }
 
-float Cylinder::enforceBoundsBody(glm::vec4 eyeP, glm::vec4 d, float t) {
+float Cylinder::enforceBoundsBody(vec4 eyeP, vec4 d, float t) {
     if ((t < 0) ||
         (eyeP.y + d.y * t > 0.5) ||
         (eyeP.y + d.y * t < -0.5)) {
@@ -37,14 +37,14 @@ float Cylinder::enforceBoundsBody(glm::vec4 eyeP, glm::vec4 d, float t) {
     return t;
 }
 
-float Cylinder::checkIntersection(glm::vec4 d, glm::vec4 eyeP) {
+float Cylinder::checkIntersection(vec4 d, vec4 eyeP) {
     float t = checkIntersectionBody(d, eyeP);
     t = std::min(t, checkIntersectionCap(d, eyeP, -1));
     t = std::min(t, checkIntersectionCap(d, eyeP, 1));
     return t;
 }
 
-float Cylinder::checkIntersectionBody(glm::vec4 d, glm::vec4 eyeP) {
+float Cylinder::checkIntersectionBody(vec4 d, vec4 eyeP) {
     float A = d.x*d.x + d.z*d.z;
     float B = 2.0*(eyeP.x*d.x + eyeP.z*d.z);
     float C = -0.25 + eyeP.x*eyeP.x + eyeP.z*eyeP.z;
@@ -53,17 +53,17 @@ float Cylinder::checkIntersectionBody(glm::vec4 d, glm::vec4 eyeP) {
     if (discriminant < 0) {
         return INT_MAX;
     } else {
-        float t0 = (-B + glm::sqrt(discriminant))/(2.0 * A);
-        float t1 = (-B - glm::sqrt(discriminant))/(2.0 * A);
+        float t0 = (-B + sqrt(discriminant))/(2.0 * A);
+        float t1 = (-B - sqrt(discriminant))/(2.0 * A);
         t0 = enforceBoundsBody(eyeP, d, t0);
         t1 = enforceBoundsBody(eyeP, d, t1);
         return std::min(t0, t1);
     }
 }
 
-float Cylinder::checkIntersectionCap(glm::vec4 d, glm::vec4 eyeP, float top) {
-    glm::vec4 p0 = glm::vec4(0.0, top * 0.5, 0.0, 0.0);
-    glm::vec4 n = glm::vec4(0.0, top * 1.0, 0.0, 0.0);
+float Cylinder::checkIntersectionCap(vec4 d, vec4 eyeP, float top) {
+    vec4 p0 = vec4(0.0, top * 0.5, 0.0, 0.0);
+    vec4 n = vec4(0.0, top * 1.0, 0.0, 0.0);
     float t = OpenGLShape::checkIntersectionPlane(d, eyeP, p0, n);
     return enforceBoundsCap(eyeP, d, t);
 }
@@ -89,11 +89,11 @@ void Cylinder::setVertexData() {
             verts.push_back(r * std::sin(-thetaStep * j)); // Z
 
             // Top vertex normal
-            glm::vec3 normal = glm::vec3(
+            vec3 normal = vec3(
                                         r * std::cos(-thetaStep * j),
                                         0,
                                         r * std::sin(-thetaStep * j));
-            normal = glm::normalize(normal);
+            normal = normalize(normal);
             verts.push_back(normal.x);
             verts.push_back(normal.y);
             verts.push_back(normal.z);

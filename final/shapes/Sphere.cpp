@@ -5,6 +5,7 @@
 #include <glm/vec3.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
+using namespace glm;
 
 Sphere::Sphere()
     : OpenGLShape()
@@ -34,11 +35,11 @@ void Sphere::setVertexData() {
             verts.push_back(r * std::sin(phiStep * j) * std::sin(-thetaStep * i));
 
             // Top vertex normal
-            glm::vec3 normal = glm::vec3(r * std::sin(phiStep * j) * std::cos(-thetaStep * i),
+            vec3 normal = vec3(r * std::sin(phiStep * j) * std::cos(-thetaStep * i),
                                          r * std::cos(phiStep * j),
                                          r * std::sin(phiStep * j) * std::sin(-thetaStep * i));
 
-            normal = glm::normalize(normal);
+            normal = normalize(normal);
             verts.push_back(normal.x);
             verts.push_back(normal.y);
             verts.push_back(normal.z);
@@ -53,10 +54,10 @@ void Sphere::setVertexData() {
             verts.push_back(r * std::sin(phiStep * (j + 1)) * std::sin(-thetaStep * i));
 
             // Bottom vertex normal
-            normal = glm::vec3(r * std::sin(phiStep * (j + 1)) * std::cos(-thetaStep * i),
+            normal = vec3(r * std::sin(phiStep * (j + 1)) * std::cos(-thetaStep * i),
                                 r * std::cos(phiStep * (j + 1)),
                                 r * std::sin(phiStep * (j + 1)) * std::sin(-thetaStep * i));
-            normal = glm::normalize(normal);
+            normal = normalize(normal);
             verts.push_back(normal.x);
             verts.push_back(normal.y);
             verts.push_back(normal.z);

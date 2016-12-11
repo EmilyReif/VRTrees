@@ -9,8 +9,8 @@ class Sphere
 public:
     Sphere();
     virtual ~Sphere();
-    static float checkIntersection(glm::vec4 ray, glm::vec4 eyeP);
-    static float enforceBounds(glm::vec4 eyeP, glm::vec4 d, float t);
+    static float checkIntersection(vec4 ray, vec4 eyeP);
+    static float enforceBounds(vec4 eyeP, vec4 d, float t);
 
 protected:
     virtual void setVertexData();

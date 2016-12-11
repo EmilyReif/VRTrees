@@ -4,9 +4,9 @@
 #include <QGLWidget>
 #include <QTimer>
 
-#include "glm/glm.hpp"            // glm::vec*, mat*, and basic glm functions
-#include "glm/gtx/transform.hpp"  // glm::translate, scale, rotate
-#include "glm/gtc/type_ptr.hpp"   // glm::value_ptr
+#include "glm/glm.hpp"            // vec*, mat*, and basic glm functions
+#include "glm/gtx/transform.hpp"  // translate, scale, rotate
+#include "glm/gtc/type_ptr.hpp"   // value_ptr
 #include "../shapes/Cap.h"
 #include "../shapes/Cone.h"
 #include "../shapes/Square.h"
@@ -15,7 +15,7 @@
 #include "../shapes/lsystemtree.h"
 #include "../shapes/OpenGLShape.h"
 #include <memory>  // std::unique_ptr
-
+#include "forestmaker.h"
 #include "gl/datatype/FBO.h"
 
 class OpenGLShape;
@@ -50,14 +50,14 @@ private:
     GLuint m_deferredSecondProgram;
 
     std::unique_ptr<OpenGLShape> m_quad;
-    std::unique_ptr<LSystemTree> m_tree;
+    std::unique_ptr<ForestMaker> m_forestMaker;
 
     std::unique_ptr<FBO> m_defShadingFBO;
 
     bool m_firstPass;
     bool m_evenPass;
 
-    glm::mat4 m_view, m_projection;
+    mat4 m_view, m_projection;
 
     /** For mouse interaction. */
     float m_angleX, m_angleY, m_zoom;

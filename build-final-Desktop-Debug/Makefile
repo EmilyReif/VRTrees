@@ -74,7 +74,8 @@ SOURCES       = ../final/src/mainwindow.cpp \
 		../final/shapes/Cone.cpp \
 		../final/shapes/Cap.cpp \
 		../final/shapes/lsystemtree.cpp \
-		../final/lsystem/lsystemgenerator.cpp qrc_shaders.cpp \
+		../final/lsystem/lsystemgenerator.cpp \
+		../final/src/forestmaker.cpp qrc_shaders.cpp \
 		qrc_images.cpp \
 		moc_mainwindow.cpp \
 		moc_glwidget.cpp \
@@ -109,6 +110,7 @@ OBJECTS       = mainwindow.o \
 		Cap.o \
 		lsystemtree.o \
 		lsystemgenerator.o \
+		forestmaker.o \
 		qrc_shaders.o \
 		qrc_images.o \
 		moc_mainwindow.o \
@@ -485,7 +487,7 @@ qmake_all: FORCE
 
 dist: 
 	@test -d .tmp/final1.0.0 || mkdir -p .tmp/final1.0.0
-	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/final1.0.0/ && $(COPY_FILE) --parents ../final/shaders/shaders.qrc ../final/images/images.qrc .tmp/final1.0.0/ && $(COPY_FILE) --parents ../final/src/mainwindow.h ../final/src/glwidget.h ../final/src/openglshape.h ../final/cs123_lib/resourceloader.h ../final/cs123_lib/errorchecker.h ../final/src/gl/datatype/FBO.h ../final/src/gl/datatype/VBO.h ../final/src/gl/datatype/VBOAttribMarker.h ../final/src/gl/datatype/VAO.h ../final/src/gl/datatype/IBO.h ../final/src/gl/shaders/ShaderAttribLocations.h ../final/src/gl/textures/Texture.h ../final/src/gl/textures/Texture2D.h ../final/src/gl/textures/TextureParameters.h ../final/src/gl/textures/TextureParametersBuilder.h ../final/src/gl/textures/RenderBuffer.h ../final/src/gl/textures/DepthBuffer.h ../final/src/gl/GLDebug.h ../final/src/databinding.h ../final/src/settings.h ../../glew-1.10.0/include/GL/glew.h ../../final/final/glwidget.h ../final/shapes/Torus.h ../final/shapes/Square.h ../final/shapes/Sphere.h ../final/shapes/OpenGLShape.h ../final/shapes/ModeratelyComplexShape.h ../final/shapes/Cylinder.h ../final/shapes/Cone.h ../final/shapes/Cap.h src/lsystemtree.h ../final/shapes/lsystemtree.h ../final/lsystem/lsystemgenerator.h .tmp/final1.0.0/ && $(COPY_FILE) --parents ../final/src/mainwindow.cpp ../final/src/main.cpp ../final/src/glwidget.cpp ../final/cs123_lib/resourceloader.cpp ../final/cs123_lib/errorchecker.cpp ../final/src/gl/datatype/FBO.cpp ../final/src/gl/datatype/VBO.cpp ../final/src/gl/datatype/VBOAttribMarker.cpp ../final/src/gl/datatype/VAO.cpp ../final/src/gl/datatype/IBO.cpp ../final/src/gl/textures/Texture.cpp ../final/src/gl/textures/Texture2D.cpp ../final/src/gl/textures/TextureParameters.cpp ../final/src/gl/textures/TextureParametersBuilder.cpp ../final/src/gl/textures/RenderBuffer.cpp ../final/src/gl/textures/DepthBuffer.cpp ../final/src/gl/GLDebug.cpp ../final/src/databinding.cpp ../final/src/settings.cpp ../../glew-1.10.0/src/glew.c ../final/shapes/Torus.cpp ../final/shapes/Square.cpp ../final/shapes/Sphere.cpp ../final/shapes/OpenGLShape.cpp ../final/shapes/ModeratelyComplexShape.cpp ../final/shapes/Cylinder.cpp ../final/shapes/Cone.cpp ../final/shapes/Cap.cpp ../final/shapes/lsystemtree.cpp ../final/lsystem/lsystemgenerator.cpp .tmp/final1.0.0/ && $(COPY_FILE) --parents ../final/src/mainwindow.ui .tmp/final1.0.0/ && (cd `dirname .tmp/final1.0.0` && $(TAR) final1.0.0.tar final1.0.0 && $(COMPRESS) final1.0.0.tar) && $(MOVE) `dirname .tmp/final1.0.0`/final1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/final1.0.0
+	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/final1.0.0/ && $(COPY_FILE) --parents ../final/shaders/shaders.qrc ../final/images/images.qrc .tmp/final1.0.0/ && $(COPY_FILE) --parents ../final/src/mainwindow.h ../final/src/glwidget.h ../final/src/openglshape.h ../final/cs123_lib/resourceloader.h ../final/cs123_lib/errorchecker.h ../final/src/gl/datatype/FBO.h ../final/src/gl/datatype/VBO.h ../final/src/gl/datatype/VBOAttribMarker.h ../final/src/gl/datatype/VAO.h ../final/src/gl/datatype/IBO.h ../final/src/gl/shaders/ShaderAttribLocations.h ../final/src/gl/textures/Texture.h ../final/src/gl/textures/Texture2D.h ../final/src/gl/textures/TextureParameters.h ../final/src/gl/textures/TextureParametersBuilder.h ../final/src/gl/textures/RenderBuffer.h ../final/src/gl/textures/DepthBuffer.h ../final/src/gl/GLDebug.h ../final/src/databinding.h ../final/src/settings.h ../../glew-1.10.0/include/GL/glew.h ../../final/final/glwidget.h ../final/shapes/Torus.h ../final/shapes/Square.h ../final/shapes/Sphere.h ../final/shapes/OpenGLShape.h ../final/shapes/ModeratelyComplexShape.h ../final/shapes/Cylinder.h ../final/shapes/Cone.h ../final/shapes/Cap.h src/lsystemtree.h ../final/shapes/lsystemtree.h ../final/lsystem/lsystemgenerator.h shapes/forestmaker.h forestmaker.h .tmp/final1.0.0/ && $(COPY_FILE) --parents ../final/src/mainwindow.cpp ../final/src/main.cpp ../final/src/glwidget.cpp ../final/cs123_lib/resourceloader.cpp ../final/cs123_lib/errorchecker.cpp ../final/src/gl/datatype/FBO.cpp ../final/src/gl/datatype/VBO.cpp ../final/src/gl/datatype/VBOAttribMarker.cpp ../final/src/gl/datatype/VAO.cpp ../final/src/gl/datatype/IBO.cpp ../final/src/gl/textures/Texture.cpp ../final/src/gl/textures/Texture2D.cpp ../final/src/gl/textures/TextureParameters.cpp ../final/src/gl/textures/TextureParametersBuilder.cpp ../final/src/gl/textures/RenderBuffer.cpp ../final/src/gl/textures/DepthBuffer.cpp ../final/src/gl/GLDebug.cpp ../final/src/databinding.cpp ../final/src/settings.cpp ../../glew-1.10.0/src/glew.c ../final/shapes/Torus.cpp ../final/shapes/Square.cpp ../final/shapes/Sphere.cpp ../final/shapes/OpenGLShape.cpp ../final/shapes/ModeratelyComplexShape.cpp ../final/shapes/Cylinder.cpp ../final/shapes/Cone.cpp ../final/shapes/Cap.cpp ../final/shapes/lsystemtree.cpp ../final/lsystem/lsystemgenerator.cpp ../final/src/forestmaker.cpp .tmp/final1.0.0/ && $(COPY_FILE) --parents ../final/src/mainwindow.ui .tmp/final1.0.0/ && (cd `dirname .tmp/final1.0.0` && $(TAR) final1.0.0.tar final1.0.0 && $(COMPRESS) final1.0.0.tar) && $(MOVE) `dirname .tmp/final1.0.0`/final1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/final1.0.0
 
 
 clean:compiler_clean 
@@ -510,16 +512,16 @@ compiler_rcc_make_all: qrc_shaders.cpp qrc_images.cpp
 compiler_rcc_clean:
 	-$(DEL_FILE) qrc_shaders.cpp qrc_images.cpp
 qrc_shaders.cpp: ../final/shaders/shaders.qrc \
-		../final/shaders/deferredShadingFirst.vert \
+		../final/shaders/deferredShadingFirst.frag \
 		../final/shaders/quad.vert \
-		../final/shaders/deferredShadingSecond.frag \
-		../final/shaders/deferredShadingFirst.frag
+		../final/shaders/deferredShadingFirst.vert \
+		../final/shaders/deferredShadingSecond.frag
 	/contrib/projects/qt5.2.0/5.2.0/gcc_64/bin/rcc -name shaders ../final/shaders/shaders.qrc -o qrc_shaders.cpp
 
 qrc_images.cpp: ../final/images/images.qrc \
-		../final/images/bark_tex.jpg \
 		../final/images/bark_tex3.jpg \
-		../final/images/bark_tex2.jpg
+		../final/images/bark_tex2.jpg \
+		../final/images/bark_tex.jpg
 	/contrib/projects/qt5.2.0/5.2.0/gcc_64/bin/rcc -name images ../final/images/images.qrc -o qrc_images.cpp
 
 compiler_moc_header_make_all: moc_mainwindow.cpp moc_glwidget.cpp moc_databinding.cpp
@@ -750,6 +752,9 @@ moc_mainwindow.cpp: ../../../../../../sys/shared/psfu/contrib/projects/qt5.2.0/5
 		../final/shapes/Square.h \
 		../final/shapes/Cylinder.h \
 		../final/shapes/Sphere.h \
+		../final/shapes/lsystemtree.h \
+		../final/lsystem/lsystemgenerator.h \
+		../final/src/forestmaker.h \
 		../final/src/gl/datatype/FBO.h \
 		../final/src/gl/textures/TextureParameters.h \
 		../final/src/mainwindow.h
@@ -974,6 +979,9 @@ moc_glwidget.cpp: ../../glew-1.10.0/include/GL/glew.h \
 		../final/shapes/Square.h \
 		../final/shapes/Cylinder.h \
 		../final/shapes/Sphere.h \
+		../final/shapes/lsystemtree.h \
+		../final/lsystem/lsystemgenerator.h \
+		../final/src/forestmaker.h \
 		../final/src/gl/datatype/FBO.h \
 		../final/src/gl/textures/TextureParameters.h \
 		../final/src/glwidget.h
@@ -1359,6 +1367,9 @@ mainwindow.o: ../final/src/mainwindow.cpp ../final/src/mainwindow.h \
 		../final/shapes/Square.h \
 		../final/shapes/Cylinder.h \
 		../final/shapes/Sphere.h \
+		../final/shapes/lsystemtree.h \
+		../final/lsystem/lsystemgenerator.h \
+		../final/src/forestmaker.h \
 		../final/src/gl/datatype/FBO.h \
 		../final/src/gl/textures/TextureParameters.h \
 		ui_mainwindow.h \
@@ -1659,6 +1670,9 @@ main.o: ../final/src/main.cpp ../../../../../../sys/shared/psfu/contrib/projects
 		../final/shapes/Square.h \
 		../final/shapes/Cylinder.h \
 		../final/shapes/Sphere.h \
+		../final/shapes/lsystemtree.h \
+		../final/lsystem/lsystemgenerator.h \
+		../final/src/forestmaker.h \
 		../final/src/gl/datatype/FBO.h \
 		../final/src/gl/textures/TextureParameters.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../final/src/main.cpp
@@ -1883,6 +1897,9 @@ glwidget.o: ../final/src/glwidget.cpp ../final/src/glwidget.h \
 		../final/shapes/Square.h \
 		../final/shapes/Cylinder.h \
 		../final/shapes/Sphere.h \
+		../final/shapes/lsystemtree.h \
+		../final/lsystem/lsystemgenerator.h \
+		../final/src/forestmaker.h \
 		../final/src/gl/datatype/FBO.h \
 		../final/src/gl/textures/TextureParameters.h \
 		../final/cs123_lib/resourceloader.h \
@@ -1894,9 +1911,7 @@ glwidget.o: ../final/src/glwidget.cpp ../final/src/glwidget.h \
 		../final/src/gl/textures/Texture2D.h \
 		../final/src/gl/textures/Texture.h \
 		../final/src/gl/shaders/ShaderAttribLocations.h \
-		../final/shapes/ModeratelyComplexShape.h \
-		../final/shapes/lsystemtree.h \
-		../final/lsystem/lsystemgenerator.h
+		../final/shapes/ModeratelyComplexShape.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o glwidget.o ../final/src/glwidget.cpp
 
 resourceloader.o: ../final/cs123_lib/resourceloader.cpp ../final/cs123_lib/resourceloader.h \
@@ -3104,11 +3119,54 @@ lsystemtree.o: ../final/shapes/lsystemtree.cpp ../final/shapes/lsystemtree.h \
 		../final/glm/mat4x3.hpp \
 		../final/glm/detail/type_mat4x3.hpp \
 		../final/glm/detail/type_mat4x3.inl \
-		../final/glm/detail/func_matrix.inl
+		../final/glm/detail/func_matrix.inl \
+		../final/glm/gtx/string_cast.hpp \
+		../final/glm/glm.hpp \
+		../final/glm/exponential.hpp \
+		../final/glm/common.hpp \
+		../final/glm/packing.hpp \
+		../final/glm/detail/func_packing.hpp \
+		../final/glm/detail/func_packing.inl \
+		../final/glm/detail/type_half.hpp \
+		../final/glm/detail/type_half.inl \
+		../final/glm/vector_relational.hpp \
+		../final/glm/integer.hpp \
+		../final/glm/detail/func_integer.hpp \
+		../final/glm/detail/func_integer.inl \
+		../final/glm/gtx/integer.hpp \
+		../final/glm/gtx/integer.inl \
+		../final/glm/gtx/quaternion.hpp \
+		../final/glm/gtc/constants.hpp \
+		../final/glm/gtc/constants.inl \
+		../final/glm/gtc/quaternion.hpp \
+		../final/glm/gtc/quaternion.inl \
+		../final/glm/gtx/norm.hpp \
+		../final/glm/gtx/norm.inl \
+		../final/glm/gtx/string_cast.inl
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o lsystemtree.o ../final/shapes/lsystemtree.cpp
 
 lsystemgenerator.o: ../final/lsystem/lsystemgenerator.cpp ../final/lsystem/lsystemgenerator.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o lsystemgenerator.o ../final/lsystem/lsystemgenerator.cpp
+
+forestmaker.o: ../final/src/forestmaker.cpp ../final/src/forestmaker.h \
+		../final/lsystem/lsystemgenerator.h \
+		../final/shapes/lsystemtree.h \
+		../final/shapes/OpenGLShape.h \
+		../../glew-1.10.0/include/GL/glew.h \
+		../final/src/gl/datatype/VBO.h \
+		../final/src/gl/datatype/VBOAttribMarker.h \
+		../final/glm/vec3.hpp \
+		../final/glm/detail/type_vec3.hpp \
+		../final/glm/detail/type_vec.hpp \
+		../final/glm/detail/precision.hpp \
+		../final/glm/detail/type_int.hpp \
+		../final/glm/detail/setup.hpp \
+		../final/glm/detail/_swizzle.hpp \
+		../final/glm/detail/_swizzle_func.hpp \
+		../final/glm/detail/type_vec3.inl \
+		../final/shapes/Cone.h \
+		../final/shapes/Cap.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o forestmaker.o ../final/src/forestmaker.cpp
 
 qrc_shaders.o: qrc_shaders.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_shaders.o qrc_shaders.cpp

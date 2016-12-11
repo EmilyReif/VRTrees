@@ -6,6 +6,7 @@
 #include <glm/vec4.hpp>
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+using namespace glm;
 
 ModeratelyComplexShape::ModeratelyComplexShape()
     : OpenGLShape(),
@@ -38,43 +39,43 @@ std::vector<float> ModeratelyComplexShape::makeBranch(int recursionDepth, int he
 
     // Now, transform the branches so that they are smaller, rotated, and moved up the tree.
     float pi = 3.1415926535;
-    glm::mat4 Transform = glm::mat4();
+    mat4 Transform = mat4();
 
     // Scale, translate and rotate both
-    Transform = glm::scale(Transform, glm::vec3(0.7, 0.7, 0.7));
-    Transform = glm::translate(Transform, glm::vec3(0, height, 0));
-    Transform = glm::rotate(Transform, -pi/4, glm::vec3(0, 1, 0));
+    Transform = scale(Transform, vec3(0.7, 0.7, 0.7));
+    Transform = translate(Transform, vec3(0, height, 0));
+    Transform = rotate(Transform, -pi/4, vec3(0, 1, 0));
 
     // Then, rotate each in opposite directions after.
-    glm::mat4 Transform1 = glm::rotate(Transform, -pi/4, glm::vec3(0, 0, 1));
-    Transform = glm::rotate(Transform, pi/4, glm::vec3(0, 0, 1));
-    Transform = glm::translate(Transform, glm::vec3(0, height/2, 0));
-    Transform1 = glm::translate(Transform1, glm::vec3(0, height/2, 0));
+    mat4 Transform1 = rotate(Transform, -pi/4, vec3(0, 0, 1));
+    Transform = rotate(Transform, pi/4, vec3(0, 0, 1));
+    Transform = translate(Transform, vec3(0, height/2, 0));
+    Transform1 = translate(Transform1, vec3(0, height/2, 0));
 
     // Translate normals
-    glm::mat3 normTransform = glm::inverse(glm::transpose(glm::mat3(Transform)));
-    glm::mat3 normTransform1 = glm::inverse(glm::transpose(glm::mat3(Transform)));
+    mat3 normTransform = inverse(transpose(mat3(Transform)));
+    mat3 normTransform1 = inverse(transpose(mat3(Transform)));
 
     for (int i = 0; i < branch1.size()/8; i++){
         int idx = i*8;
-        glm::vec4 p = glm::vec4(
+        vec4 p = vec4(
                     branch1[idx + 0],
                     branch1[idx + 1],
                     branch1[idx + 2], 1);
-        glm::vec3 n = glm::vec3(
+        vec3 n = vec3(
                 branch1[idx + 3],
                 branch1[idx + 4],
                 branch1[idx + 5]);
 
         // Left branch
         // Position
-        glm::vec4 p1 = Transform*p;
+        vec4 p1 = Transform*p;
         branch1[idx + 0] = p1[0];
         branch1[idx + 1] = p1[1];
         branch1[idx + 2] = p1[2];
 
         // Normal
-        glm::vec3 n1 = glm::normalize(normTransform*n);
+        vec3 n1 = normalize(normTransform*n);
         branch1[idx + 3] = n1[0];
         branch1[idx + 4] = n1[1];
         branch1[idx + 5] = n1[2];
@@ -85,13 +86,13 @@ std::vector<float> ModeratelyComplexShape::makeBranch(int recursionDepth, int he
 
         // Right branch
         // Position
-        glm::vec4 p2 = Transform1*p;
+        vec4 p2 = Transform1*p;
         branch2[idx + 0] = p2[0];
         branch2[idx + 1] = p2[1];
         branch2[idx + 2] = p2[2];
 
         // Normal
-        glm::vec3 n2 = glm::normalize(normTransform1*n);
+        vec3 n2 = normalize(normTransform1*n);
         branch2[idx + 3] = n2[0];
         branch2[idx + 4] = n2[1];
         branch2[idx + 5] = n2[2];
@@ -119,10 +120,10 @@ void ModeratelyComplexShape::setVertexData() {
                                           0.5);
 
     // Move the whole thing down so it rotates correctly around the origin
-    glm::mat4 Transform = glm::translate(glm::mat4(), glm::vec3(0, -0.5, 0));
+    mat4 Transform = translate(mat4(), vec3(0, -0.5, 0));
     for (int i = 0; i < verts.size()/8; i++){
         int idx = i*8;
-        glm::vec4 p = glm::vec4(
+        vec4 p = vec4(
                     verts[idx + 0],
                     verts[idx + 1],
                     verts[idx + 2], 1);

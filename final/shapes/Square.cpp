@@ -38,7 +38,7 @@ void Square::setVertexData() {
     OpenGLShape::sendVertexData(quadData);
 }
 
-float Square::enforceBounds(glm::vec4 eyeP, glm::vec4 d, float t, float max, float min) {
+float Square::enforceBounds(vec4 eyeP, vec4 d, float t, float max, float min) {
     float x = eyeP.x + d.x*t;
     float y = eyeP.y + d.y*t;
     float z = eyeP.z + d.z*t;
@@ -52,9 +52,9 @@ float Square::enforceBounds(glm::vec4 eyeP, glm::vec4 d, float t, float max, flo
     return t;
 }
 
-float Square::checkIntersectionSide(glm::vec4 d, glm::vec4 eyeP, int dimension, float norm) {
-    glm::vec4 p0 = glm::vec4(0.0);
-    glm::vec4 n = glm::vec4(0.0);
+float Square::checkIntersectionSide(vec4 d, vec4 eyeP, int dimension, float norm) {
+    vec4 p0 = vec4(0.0);
+    vec4 n = vec4(0.0);
     p0[dimension] = norm * 0.5;
     n[dimension] = norm * 1.0;
     float epsilon = 0.00001;
@@ -63,7 +63,7 @@ float Square::checkIntersectionSide(glm::vec4 d, glm::vec4 eyeP, int dimension, 
     return t;
 }
 
-float Square::checkIntersection(glm::vec4 d, glm::vec4 eyeP) {
+float Square::checkIntersection(vec4 d, vec4 eyeP) {
     float t = INT_MAX;
 
     // Check for intersection with each side of the square.
@@ -75,7 +75,7 @@ float Square::checkIntersection(glm::vec4 d, glm::vec4 eyeP) {
     return t;
 }
 
-glm::vec3 Square::getNormal(glm::vec4 rayObj, glm::vec4 eyePObj, float minT) {
+vec3 Square::getNormal(vec4 rayObj, vec4 eyePObj, float minT) {
 
     float x = eyePObj.x + rayObj.x*minT;
     float y = eyePObj.y + rayObj.y*minT;
@@ -83,7 +83,7 @@ glm::vec3 Square::getNormal(glm::vec4 rayObj, glm::vec4 eyePObj, float minT) {
     float e = 0.001;
 
     // Depending on where we are on the cube, the normal is just that side.
-    glm::vec3 normal = glm::vec3(0.f, 0.f, 0.f);
+    vec3 normal = vec3(0.f, 0.f, 0.f);
     if (x > 0.5 - e) { normal.x = 1.f; }
     if (x < -0.5 + e) { normal.x = -1.f; }
     if (y > 0.5 - e) { normal.y = 1.f; }
@@ -94,11 +94,11 @@ glm::vec3 Square::getNormal(glm::vec4 rayObj, glm::vec4 eyePObj, float minT) {
     return normal;
 }
 
-glm::vec2 Square::calculateUV(glm::vec4 point){
+vec2 Square::calculateUV(vec4 point){
     float e = 0.001;
 
     // Depending on where we are on the cube, the normal is just that side.
-    glm::vec2 uv = glm::vec2(0.f, 0.f);
+    vec2 uv = vec2(0.f, 0.f);
     if (point.x > 0.5 - e) {
         uv.x = 1.5 - point.z;
         uv.y = 1.5 - point.y;

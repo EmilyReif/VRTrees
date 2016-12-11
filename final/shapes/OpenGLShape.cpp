@@ -10,6 +10,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 using namespace CS123::GL;
+using namespace glm;
 
 OpenGLShape::OpenGLShape():
     m_size(0),
@@ -33,7 +34,7 @@ OpenGLShape::~OpenGLShape()
     glDeleteTextures(1, &m_textureID);
 }
 
-float OpenGLShape::checkIntersectionPlane(glm::vec4 d, glm::vec4 eyeP, glm::vec4 p0, glm::vec4 n) {
+float OpenGLShape::checkIntersectionPlane(vec4 d, vec4 eyeP, vec4 p0, vec4 n) {
     float a = n.x*p0.x + n.y*p0.y + n.z*p0.z;
     float b = n.x*eyeP.x + n.y*eyeP.y + n.z*eyeP.z;
     float c = n.x*d.x + n.y*d.y + n.z*d.z;

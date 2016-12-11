@@ -9,6 +9,7 @@
 #include "gl/datatype/VBO.h"
 #include "gl/datatype/VBOAttribMarker.h"
 #include <glm/vec3.hpp>
+using namespace glm;
 
 namespace CS123 { namespace GL {
 
@@ -38,7 +39,7 @@ public:
     void checkParamsMatchSettings();
     /** Sets the member variables based on the inputs **/
     void setParams(int p1, int p2, int p3);
-    static float checkIntersectionPlane(glm::vec4 d, glm::vec4 eyeP, glm::vec4 p0, glm::vec4 n);
+    static float checkIntersectionPlane(vec4 d, vec4 eyeP, vec4 p0, vec4 n);
 
 protected:
 

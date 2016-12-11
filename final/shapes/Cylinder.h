@@ -10,11 +10,11 @@ class Cylinder
 public:
     Cylinder();
     virtual ~Cylinder();
-    static float checkIntersection(glm::vec4 ray, glm::vec4 eyeP);
-    static float checkIntersectionBody(glm::vec4 ray, glm::vec4 eyeP);
-    static float checkIntersectionCap(glm::vec4 ray, glm::vec4 eyeP, float top);
-    static float enforceBoundsBody(glm::vec4 eyeP, glm::vec4 d, float t);
-    static float enforceBoundsCap(glm::vec4 eyeP, glm::vec4 d, float t);
+    static float checkIntersection(vec4 ray, vec4 eyeP);
+    static float checkIntersectionBody(vec4 ray, vec4 eyeP);
+    static float checkIntersectionCap(vec4 ray, vec4 eyeP, float top);
+    static float enforceBoundsBody(vec4 eyeP, vec4 d, float t);
+    static float enforceBoundsCap(vec4 eyeP, vec4 d, float t);
 
 
 protected:

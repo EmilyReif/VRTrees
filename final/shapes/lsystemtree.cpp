@@ -23,7 +23,7 @@ LSystemTree:: ~LSystemTree()
 {
 }
 
-std::vector<float> LSystemTree::makeBranch(int recursionDepth, int heightTesselation, int thetaTesselation, float radius, float height, glm::vec3 scale, float angleX, float angleZ, float translation) {
+std::vector<float> LSystemTree::makeBranch(int recursionDepth, int heightTesselation, int thetaTesselation, float radius, float height, vec3 scale, float angleX, float angleZ, float translation) {
     std::vector<float> verts = m_cone.createVertsVector(heightTesselation, thetaTesselation, radius, height);
     if (recursionDepth < 1) {
         return verts;
@@ -58,36 +58,38 @@ std::vector<float> LSystemTree::makeBranch(int recursionDepth, int heightTessela
     }
 
     // FACK
-    glm::mat4 Transform = glm::mat4();
+    mat4 Transform = mat4();
     vec3 translationTransform = vec3(0.0, translation, 0.0);
-    Transform = glm::translate(Transform, translationTransform);
+    Transform = translate(Transform, translationTransform);
     Transform = glm::scale(Transform, scale);
-    Transform = glm::rotate(Transform, angleX, glm::vec3(0, 0, 1));
-    Transform = glm::rotate(Transform, angleZ, glm::vec3(0, 1, 0));
+    Transform = rotate(Transform, angleX, vec3(0, 0, 1));
+    Transform = rotate(Transform, angleZ, vec3(1, 0, 0));
 
-    Transform = glm::translate(Transform, glm::vec3(0, height/2, 0));
-    glm::mat3 normTransform = glm::inverse(glm::transpose(glm::mat3(Transform)));
+    Transform = translate(Transform, vec3(0, height/2, 0));
+
+
+    mat3 normTransform = inverse(transpose(mat3(Transform)));
 
     for (int i = 0; i < verts.size()/8; i++){
         int idx = i*8;
-        glm::vec4 p = glm::vec4(
+        vec4 p = vec4(
                     verts[idx + 0],
                     verts[idx + 1],
                     verts[idx + 2], 1);
 
-        glm::vec3 n = glm::vec3(
+        vec3 n = vec3(
                 verts[idx + 3],
                 verts[idx + 4],
                 verts[idx + 5]);
 
         // Position
-        glm::vec4 p1 = Transform*p;
+        vec4 p1 = Transform*p;
         verts[idx + 0] = p1[0];
         verts[idx + 1] = p1[1];
         verts[idx + 2] = p1[2];
 
         // Normal
-        glm::vec3 n1 = glm::normalize(normTransform*n);
+        vec3 n1 = normalize(normTransform*n);
         verts[idx + 3] = n1[0];
         verts[idx + 4] = n1[1];
         verts[idx + 5] = n1[2];
@@ -103,7 +105,7 @@ void LSystemTree::setVertexData() {
     // Store the vertex data and other values to be used later when constructing the VAO
     int heightTesselation = getParam1() + 1;
     int thetaTesselation = getParam2()+ 2;
-    int numBranchSteps = 4;//getParam3();
+    int numBranchSteps = 5;//getParam3();
 
     lSystemRule rule = m_rulesDict['F'];
     std::vector<float> verts = makeBranch(numBranchSteps,
@@ -111,16 +113,16 @@ void LSystemTree::setVertexData() {
                                           thetaTesselation,
                                           0.08, // Initial radius
                                           0.5,  // Initial height
-                                          glm::vec3(1.0, 1.0, 1.0),
+                                          vec3(1.0, 1.0, 1.0),
                                           rule.angleX,
                                           rule.angleX,
                                           rule.translationUp);
 
     // Move the whole thing down so it rotates correctly around the origin
-    glm::mat4 Transform = glm::translate(glm::mat4(), glm::vec3(0, -1.25, 0));
+    mat4 Transform = translate(mat4(), vec3(0, -0.5, 0));
     for (int i = 0; i < verts.size()/8; i++){
         int idx = i*8;
-        glm::vec4 p = glm::vec4(
+        vec4 p = vec4(
                     verts[idx + 0],
                     verts[idx + 1],
                     verts[idx + 2], 1);

@@ -17,6 +17,7 @@
 #include "../shapes/Sphere.h"
 #include "../shapes/OpenGLShape.h"
 #include "../shapes/lsystemtree.h"
+#include "forestmaker.h"
 
 
 using namespace CS123::GL;
@@ -25,11 +26,13 @@ GLWidget::GLWidget(QGLFormat format, QWidget *parent)
     : QGLWidget(format, parent),
       m_width(width()), m_height(height()),
       m_phongProgram(0), m_deferredSecondProgram(0),
-      m_quad(nullptr), m_tree(nullptr),
+      m_quad(nullptr),
+      m_forestMaker(nullptr),
       m_defShadingFBO(nullptr),
       m_angleX(-0.5f), m_angleY(0.5f), m_zoom(4.f),
       m_texID(0)
 {
+
 }
 
 GLWidget::~GLWidget()
@@ -49,19 +52,9 @@ void GLWidget::initializeGL() {
     m_deferredSecondProgram = ResourceLoader::createShaderProgram(
                 ":/shaders/quad.vert", ":/shaders/deferredShadingSecond.frag");
 
-    // Initialize sphere OpenGLShape.
-    float pi = 3.1415926535;
-    std::vector<branch> branches(0);
-    vec3 scale = glm::vec3(0.7, 0.7, 0.7);
-    branches.push_back({scale, 0, 0, 0.0});
-    branches.push_back({scale, 1, 0, 1});
-    branches.push_back({scale, 0, 0, 1});
-    branches.push_back({scale, -1, 0, 2});
-    std::map<char, lSystemRule> rulesDict = {};
-    rulesDict['F'] = lSystemRule{pi/10, 0, 0.5, branches};
-    m_tree = std::make_unique<LSystemTree>(rulesDict);
-
     m_quad = std::make_unique<Square>();
+    m_forestMaker = std::make_unique<ForestMaker>();
+
 
     // Initialize texture
     QImage image(":/images/bark_tex3.jpg");
@@ -95,12 +88,12 @@ void GLWidget::draw() {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_texID);
 
-    glm::mat4x4 loc = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
+    mat4x4 loc = translate(vec3(0.0f, 0.0f, 0.0f));
 
-    glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "view"),  1, GL_FALSE, glm::value_ptr(m_view));
-    glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "projection"),  1, GL_FALSE, glm::value_ptr(m_projection));
-    glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, glm::value_ptr(loc));
-    m_tree->draw();
+    glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "view"),  1, GL_FALSE, value_ptr(m_view));
+    glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "projection"),  1, GL_FALSE, value_ptr(m_projection));
+    glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, value_ptr(loc));
+    m_forestMaker->drawTrees();
     m_defShadingFBO->unbind();
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -118,7 +111,7 @@ void GLWidget::draw() {
     glActiveTexture(GL_TEXTURE2);
     m_defShadingFBO->getColorAttachment(2).bind();
 
-    glUniformMatrix4fv(glGetUniformLocation(m_deferredSecondProgram, "view"),  1, GL_FALSE, glm::value_ptr(m_view));
+    glUniformMatrix4fv(glGetUniformLocation(m_deferredSecondProgram, "view"),  1, GL_FALSE, value_ptr(m_view));
     m_quad->draw();
     glUseProgram(0);
 }
@@ -152,10 +145,10 @@ void GLWidget::wheelEvent(QWheelEvent *event) {
 }
 
 void GLWidget::rebuildMatrices() {
-    m_view = glm::translate(glm::vec3(0.f, -1.f, -m_zoom)) *
-             glm::rotate(m_angleY, glm::vec3(1.f,0.f,0.f)) *
-             glm::rotate(m_angleX, glm::vec3(0.f,1.f,0.f));
+    m_view = translate(vec3(0.f, -1.f, -m_zoom)) *
+             rotate(m_angleY, vec3(1.f,0.f,0.f)) *
+             rotate(m_angleX, vec3(0.f,1.f,0.f));
 
-    m_projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
+    m_projection = perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
     update();
 }

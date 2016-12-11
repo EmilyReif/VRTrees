@@ -36,10 +36,10 @@ void Torus::setVertexData() {
             verts.push_back(r * std::sin(thetaStep * i));
 
             // Top vertex normal
-            glm::vec3 normal = glm::vec3((r * std::cos(thetaStep * i)) * std::cos(-phiStep * (j + 1)),
+            vec3 normal = vec3((r * std::cos(thetaStep * i)) * std::cos(-phiStep * (j + 1)),
                                          (r * std::cos(thetaStep * i)) * std::sin(-phiStep * (j + 1)),
                                          r * std::sin(thetaStep * i));
-            normal = glm::normalize(normal);
+            normal = normalize(normal);
             verts.push_back(normal.x);
             verts.push_back(normal.y);
             verts.push_back(normal.z);
@@ -54,10 +54,10 @@ void Torus::setVertexData() {
             verts.push_back(r * std::sin(thetaStep * i));
 
             // Top vertex normal
-            normal = glm::vec3((r * std::cos(thetaStep * i)) * std::cos(-phiStep * j),
+            normal = vec3((r * std::cos(thetaStep * i)) * std::cos(-phiStep * j),
                                 (r * std::cos(thetaStep * i)) * std::sin(-phiStep * j),
                                 r * std::sin(thetaStep * i));
-            normal = glm::normalize(normal);
+            normal = normalize(normal);
             verts.push_back(normal.x);
             verts.push_back(normal.y);
             verts.push_back(normal.z);
