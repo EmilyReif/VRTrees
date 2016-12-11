@@ -25,7 +25,7 @@ GLWidget::GLWidget(QGLFormat format, QWidget *parent)
     : QGLWidget(format, parent),
       m_width(width()), m_height(height()),
       m_phongProgram(0), m_deferredSecondProgram(0),
-      m_quad(nullptr), m_sphere(nullptr),
+      m_quad(nullptr), m_tree(nullptr),
       m_defShadingFBO(nullptr),
       m_angleX(-0.5f), m_angleY(0.5f), m_zoom(4.f),
       m_texID(0)
@@ -50,7 +50,16 @@ void GLWidget::initializeGL() {
                 ":/shaders/quad.vert", ":/shaders/deferredShadingSecond.frag");
 
     // Initialize sphere OpenGLShape.
-    m_sphere = std::make_unique<LSystemTree>();
+    float pi = 3.1415926535;
+    std::vector<branch> branches(0);
+    vec3 scale = glm::vec3(0.7, 0.7, 0.7);
+    branches.push_back({scale, 0, 0, 0.0});
+    branches.push_back({scale, 1, 0, 1});
+    branches.push_back({scale, 0, 0, 1});
+    branches.push_back({scale, -1, 0, 2});
+    std::map<char, lSystemRule> rulesDict = {};
+    rulesDict['F'] = lSystemRule{pi/10, 0, 0.5, branches};
+    m_tree = std::make_unique<LSystemTree>(rulesDict);
 
     m_quad = std::make_unique<Square>();
 
@@ -91,7 +100,7 @@ void GLWidget::draw() {
     glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "view"),  1, GL_FALSE, glm::value_ptr(m_view));
     glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "projection"),  1, GL_FALSE, glm::value_ptr(m_projection));
     glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, glm::value_ptr(loc));
-    m_sphere->draw();
+    m_tree->draw();
     m_defShadingFBO->unbind();
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -143,7 +152,7 @@ void GLWidget::wheelEvent(QWheelEvent *event) {
 }
 
 void GLWidget::rebuildMatrices() {
-    m_view = glm::translate(glm::vec3(0.f, 0.f, -m_zoom)) *
+    m_view = glm::translate(glm::vec3(0.f, -1.f, -m_zoom)) *
              glm::rotate(m_angleY, glm::vec3(1.f,0.f,0.f)) *
              glm::rotate(m_angleX, glm::vec3(0.f,1.f,0.f));
 

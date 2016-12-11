@@ -12,6 +12,7 @@
 #include "../shapes/Square.h"
 #include "../shapes/Cylinder.h"
 #include "../shapes/Sphere.h"
+#include "../shapes/lsystemtree.h"
 #include "../shapes/OpenGLShape.h"
 #include <memory>  // std::unique_ptr
 
@@ -49,7 +50,7 @@ private:
     GLuint m_deferredSecondProgram;
 
     std::unique_ptr<OpenGLShape> m_quad;
-    std::unique_ptr<OpenGLShape> m_sphere;
+    std::unique_ptr<LSystemTree> m_tree;
 
     std::unique_ptr<FBO> m_defShadingFBO;
 

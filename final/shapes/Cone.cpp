@@ -22,15 +22,10 @@ std::vector<float> Cone::createVertsVector(int heightTesselation, int thetaTesse
     float pi = 3.14159265358979323;
     float thetaStep = 2 * pi/thetaTesselation;
     float heightStep = 2 * height/heightTesselation;
-    float offset = 0;
-    float prevOffset = 0;
 
     std::vector<float> verts(0);
 
     for (int i = 0; i < heightTesselation; i++) {
-        prevOffset = offset;
-        offset = ((double)std::rand()/RAND_MAX - 0.5)/10.0;
-
         for (int j = 0; j < (thetaTesselation + 1); j++) {
             int linearScale = heightTesselation - i;
             // Top vertex position
