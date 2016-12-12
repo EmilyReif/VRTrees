@@ -31,7 +31,7 @@ std::vector<float> LSystemTree::makeBranch(int recursionDepth, int heightTessela
 
     // The smaller the branches get, the less tesselated they are
     heightTesselation = std::max(1, heightTesselation * 2/3);
-    thetaTesselation = std::max(3, thetaTesselation * 2/3);
+    thetaTesselation = std::max(5, thetaTesselation * 2/3);
 
     // Also, the radius decreases.
     float newRad = std::max(radius * scale.x, 0.07f);
@@ -62,8 +62,8 @@ std::vector<float> LSystemTree::makeBranch(int recursionDepth, int heightTessela
     vec3 translationTransform = vec3(0.0, translation, 0.0);
     Transform = translate(Transform, translationTransform);
     Transform = glm::scale(Transform, scale);
+    Transform = rotate(Transform, angleZ, vec3(0, 1, 0));
     Transform = rotate(Transform, angleX, vec3(0, 0, 1));
-    Transform = rotate(Transform, angleZ, vec3(1, 0, 0));
 
     Transform = translate(Transform, vec3(0, height/2, 0));
 
@@ -96,7 +96,7 @@ std::vector<float> LSystemTree::makeBranch(int recursionDepth, int heightTessela
 
         // UV
         verts[idx + 6] *= scale.x;
-        verts[idx + 7] *= scale.x;
+        verts[idx + 7] *= scale.y;
     }
     return verts;
 }
@@ -105,7 +105,7 @@ void LSystemTree::setVertexData() {
     // Store the vertex data and other values to be used later when constructing the VAO
     int heightTesselation = getParam1() + 1;
     int thetaTesselation = getParam2()+ 2;
-    int numBranchSteps = 5;//getParam3();
+    int numBranchSteps = 6;//getParam3();
 
     lSystemRule rule = m_rulesDict['F'];
     std::vector<float> verts = makeBranch(numBranchSteps,
@@ -115,7 +115,7 @@ void LSystemTree::setVertexData() {
                                           0.5,  // Initial height
                                           vec3(1.0, 1.0, 1.0),
                                           rule.angleX,
-                                          rule.angleX,
+                                          rule.angleZ,
                                           rule.translationUp);
 
     // Move the whole thing down so it rotates correctly around the origin
