@@ -520,8 +520,8 @@ qrc_shaders.cpp: ../final/shaders/shaders.qrc \
 
 qrc_images.cpp: ../final/images/images.qrc \
 		../final/images/bark_tex3.jpg \
-		../final/images/bark_tex2.jpg \
-		../final/images/bark_tex.jpg
+		../final/images/bark_tex.jpg \
+		../final/images/bark_tex2.jpg
 	/contrib/projects/qt5.2.0/5.2.0/gcc_64/bin/rcc -name images ../final/images/images.qrc -o qrc_images.cpp
 
 compiler_moc_header_make_all: moc_mainwindow.cpp moc_glwidget.cpp moc_databinding.cpp
@@ -3062,20 +3062,19 @@ lsystemtree.o: ../final/shapes/lsystemtree.cpp ../final/shapes/lsystemtree.h \
 		../final/shapes/Cone.h \
 		../final/shapes/Cap.h \
 		../final/lsystem/lsystemgenerator.h \
-		../final/src/gl/shaders/ShaderAttribLocations.h \
-		../final/glm/vec4.hpp \
-		../final/glm/detail/type_vec4.hpp \
-		../final/glm/detail/type_vec4.inl \
 		../final/glm/mat4x4.hpp \
 		../final/glm/detail/type_mat4x4.hpp \
 		../final/glm/fwd.hpp \
 		../final/glm/detail/type_float.hpp \
 		../final/glm/detail/type_mat.hpp \
+		../final/glm/detail/type_vec4.hpp \
+		../final/glm/detail/type_vec4.inl \
 		../final/glm/detail/type_mat4x4.inl \
 		../final/glm/gtc/matrix_transform.hpp \
 		../final/glm/vec2.hpp \
 		../final/glm/detail/type_vec2.hpp \
 		../final/glm/detail/type_vec2.inl \
+		../final/glm/vec4.hpp \
 		../final/glm/gtc/matrix_transform.inl \
 		../final/glm/geometric.hpp \
 		../final/glm/detail/func_geometric.hpp \
@@ -3120,6 +3119,7 @@ lsystemtree.o: ../final/shapes/lsystemtree.cpp ../final/shapes/lsystemtree.h \
 		../final/glm/detail/type_mat4x3.hpp \
 		../final/glm/detail/type_mat4x3.inl \
 		../final/glm/detail/func_matrix.inl \
+		../final/src/gl/shaders/ShaderAttribLocations.h \
 		../final/glm/gtx/string_cast.hpp \
 		../final/glm/glm.hpp \
 		../final/glm/exponential.hpp \
@@ -3165,7 +3165,76 @@ forestmaker.o: ../final/src/forestmaker.cpp ../final/src/forestmaker.h \
 		../final/glm/detail/_swizzle_func.hpp \
 		../final/glm/detail/type_vec3.inl \
 		../final/shapes/Cone.h \
-		../final/shapes/Cap.h
+		../final/shapes/Cap.h \
+		../final/glm/mat4x4.hpp \
+		../final/glm/detail/type_mat4x4.hpp \
+		../final/glm/fwd.hpp \
+		../final/glm/detail/type_float.hpp \
+		../final/glm/detail/type_mat.hpp \
+		../final/glm/detail/type_vec4.hpp \
+		../final/glm/detail/type_vec4.inl \
+		../final/glm/detail/type_mat4x4.inl \
+		../final/glm/gtc/matrix_transform.hpp \
+		../final/glm/vec2.hpp \
+		../final/glm/detail/type_vec2.hpp \
+		../final/glm/detail/type_vec2.inl \
+		../final/glm/vec4.hpp \
+		../final/glm/gtc/matrix_transform.inl \
+		../final/glm/geometric.hpp \
+		../final/glm/detail/func_geometric.hpp \
+		../final/glm/detail/func_geometric.inl \
+		../final/glm/detail/func_exponential.hpp \
+		../final/glm/detail/type_vec1.hpp \
+		../final/glm/detail/type_vec1.inl \
+		../final/glm/detail/func_exponential.inl \
+		../final/glm/detail/func_vector_relational.hpp \
+		../final/glm/detail/func_vector_relational.inl \
+		../final/glm/detail/_vectorize.hpp \
+		../final/glm/detail/func_common.hpp \
+		../final/glm/detail/_fixes.hpp \
+		../final/glm/detail/func_common.inl \
+		../final/glm/trigonometric.hpp \
+		../final/glm/detail/func_trigonometric.hpp \
+		../final/glm/detail/func_trigonometric.inl \
+		../final/glm/matrix.hpp \
+		../final/glm/detail/func_matrix.hpp \
+		../final/glm/mat2x2.hpp \
+		../final/glm/detail/type_mat2x2.hpp \
+		../final/glm/detail/type_mat2x2.inl \
+		../final/glm/mat2x3.hpp \
+		../final/glm/detail/type_mat2x3.hpp \
+		../final/glm/detail/type_mat2x3.inl \
+		../final/glm/mat2x4.hpp \
+		../final/glm/detail/type_mat2x4.hpp \
+		../final/glm/detail/type_mat2x4.inl \
+		../final/glm/mat3x2.hpp \
+		../final/glm/detail/type_mat3x2.hpp \
+		../final/glm/detail/type_mat3x2.inl \
+		../final/glm/mat3x3.hpp \
+		../final/glm/detail/type_mat3x3.hpp \
+		../final/glm/detail/type_mat3x3.inl \
+		../final/glm/mat3x4.hpp \
+		../final/glm/detail/type_mat3x4.hpp \
+		../final/glm/detail/type_mat3x4.inl \
+		../final/glm/mat4x2.hpp \
+		../final/glm/detail/type_mat4x2.hpp \
+		../final/glm/detail/type_mat4x2.inl \
+		../final/glm/mat4x3.hpp \
+		../final/glm/detail/type_mat4x3.hpp \
+		../final/glm/detail/type_mat4x3.inl \
+		../final/glm/detail/func_matrix.inl \
+		../final/glm/glm.hpp \
+		../final/glm/exponential.hpp \
+		../final/glm/common.hpp \
+		../final/glm/packing.hpp \
+		../final/glm/detail/func_packing.hpp \
+		../final/glm/detail/func_packing.inl \
+		../final/glm/detail/type_half.hpp \
+		../final/glm/detail/type_half.inl \
+		../final/glm/vector_relational.hpp \
+		../final/glm/integer.hpp \
+		../final/glm/detail/func_integer.hpp \
+		../final/glm/detail/func_integer.inl
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o forestmaker.o ../final/src/forestmaker.cpp
 
 qrc_shaders.o: qrc_shaders.cpp 

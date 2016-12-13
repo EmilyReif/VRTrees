@@ -16,8 +16,8 @@ void main(){
     PosAndSpec = vec4(pos, spec);
     float diffuse = 1.0;
     NormalAndDiffuse = vec4(normal, diffuse);
-    NormalAndDiffuse.x += c.r;
-    NormalAndDiffuse.y += c.g;
-    NormalAndDiffuse.z += c.b;
+//    NormalAndDiffuse.x += c.r;
+    NormalAndDiffuse.y += c.r;
+//    NormalAndDiffuse.z += c.r;
 
 }

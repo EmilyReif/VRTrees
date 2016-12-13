@@ -56,7 +56,7 @@ void GLWidget::initializeGL() {
     m_forestMaker = std::make_unique<ForestMaker>();
 
 
-    // Initialize texture
+    // Initialize textures.
     QImage image(":/images/bark_tex3.jpg");
     glGenTextures(1, &m_texID);
     glBindTexture(GL_TEXTURE_2D, m_texID);
@@ -72,7 +72,6 @@ void GLWidget::initializeGL() {
          image.bits());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void GLWidget::paintGL() {
@@ -98,19 +97,31 @@ void GLWidget::draw() {
     {
         int numTrees = trees.size();
         for (int i = 0; i < numTrees; i++) {
-            mat4x4 loc = trees[i].modelMatrix;
+//            loc = trees[i].modelMatrix;
+            float x = i - numTrees/2.f;
+            loc = translate(vec3(x, 0.0, 0));
             glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, value_ptr(loc));
             trees[i].treeShape->draw();
         }
+
+//        int numTrees = trees.size();
+//        for (int i = 0; i < numTrees; i++) {
+//            for (int j = 0; j < numTrees; j++) {
+////            loc = trees[i].modelMatrix;
+//                float x = i - numTrees/2.f;
+//                float z = j - numTrees/2.f;
+//                loc = translate(vec3(x, 0.0, z));
+//                glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, value_ptr(loc));
+//                trees[i].treeShape->draw();
+//            }
+//        }
+
     }
-
-
 
     m_defShadingFBO->unbind();
     glBindTexture(GL_TEXTURE_2D, 0);
 
     glUseProgram(m_deferredSecondProgram);
-
     glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "NormalAndDiffuse"), 0);
     glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "PosAndSpec"), 1);
     glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "Color"), 2);
@@ -135,7 +146,7 @@ void GLWidget::resizeGL(int w, int h) {
     m_height = h;
 
     // TODO: [Task 5] Initialize FBOs here, with dimensions m_width and m_height.
-    m_defShadingFBO = std::make_unique<FBO>(3, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height, TextureParameters::WRAP_METHOD::CLAMP_TO_EDGE, TextureParameters::FILTER_METHOD::LINEAR);
+    m_defShadingFBO = std::make_unique<FBO>(3, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height, TextureParameters::WRAP_METHOD::REPEAT, TextureParameters::FILTER_METHOD::LINEAR);
     rebuildMatrices();
 }
 

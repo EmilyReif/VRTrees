@@ -123,17 +123,6 @@ void LSystemTree::setVertexData() {
     Transform = rotate(Transform, -rule.angle.y, vec3(1, 0, 0));
     Transform = rotate(Transform, -rule.angle.x, vec3(0, 1, 0));
     Transform = translate(Transform, vec3(0, -rule.translationUp, 0));
-    for (int i = 0; i < verts.size()/8; i++){
-        int idx = i*8;
-        vec4 p = vec4(
-                    verts[idx + 0],
-                    verts[idx + 1],
-                    verts[idx + 2], 1);
-
-        p = Transform*p;
-        verts[idx + 0] = p[0];
-        verts[idx + 1] = p[1];
-        verts[idx + 2] = p[2];
-    }
+    verts = applyTransformToVerts(verts, Transform);
     OpenGLShape::sendVertexData(verts);
 }
