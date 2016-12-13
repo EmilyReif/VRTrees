@@ -122,7 +122,7 @@ void LSystemTree::setVertexData() {
     Transform = rotate(Transform, -rule.angle.z, vec3(0, 1, 0));
     Transform = rotate(Transform, -rule.angle.y, vec3(1, 0, 0));
     Transform = rotate(Transform, -rule.angle.x, vec3(0, 1, 0));
-    Transform = translate(Transform, vec3(0, -0.5, 0));
+    Transform = translate(Transform, vec3(0, -rule.translationUp, 0));
     for (int i = 0; i < verts.size()/8; i++){
         int idx = i*8;
         vec4 p = vec4(

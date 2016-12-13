@@ -93,7 +93,19 @@ void GLWidget::draw() {
     glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "view"),  1, GL_FALSE, value_ptr(m_view));
     glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "projection"),  1, GL_FALSE, value_ptr(m_projection));
     glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, value_ptr(loc));
-    m_forestMaker->drawTrees();
+
+    std::vector<tree> trees = m_forestMaker->getTrees();
+    {
+        int numTrees = trees.size();
+        for (int i = 0; i < numTrees; i++) {
+            mat4x4 loc = trees[i].modelMatrix;
+            glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, value_ptr(loc));
+            trees[i].treeShape->draw();
+        }
+    }
+
+
+
     m_defShadingFBO->unbind();
     glBindTexture(GL_TEXTURE_2D, 0);
 
