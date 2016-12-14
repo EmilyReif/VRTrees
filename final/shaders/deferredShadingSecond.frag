@@ -22,7 +22,7 @@ const vec3 specColor = vec3(1.0, 1.0, 1.0);
 
 // General scene properties (last val is dropoff).
 //const vec4 fog =  vec4(0.3, 0.3, 0.6, 0.5);
-const vec4 fog =  vec4(0, 0, 0, 1);
+const vec4 fog =  vec4(1);
 
 uniform sampler2D NormalAndDiffuse;
 uniform sampler2D PosAndSpec;
@@ -82,12 +82,8 @@ void main(){
 //        fragColor += snow ;
 
         // Add fog.
-        float fogMix = (pos*view).z;
+        float fogMix = pow(max((length(pos - camPos) - 3), 0) * fog.w, 0.5) - .6;
         fragColor = mix(fragColor, fog, fogMix);
-
-//        float fogMix = pow((length(pos - camPos) - 3) * fog.w, 3);
-//        fragColor = mix(fragColor, fog, fogMix);
-//        fragColor = vec4(fogMix);
 
     } else {
         fragColor = fog;

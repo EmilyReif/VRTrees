@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/vec3.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
 ForestMaker::ForestMaker():
     m_trees(std::vector<tree>())
@@ -147,3 +148,38 @@ void ForestMaker::makeTree4() {
     tree t = tree{std::make_unique<LSystemTree>(rulesDict), modelMatrix};
     m_trees.push_back(t);
 }
+
+
+// Random version of 3d tree
+void ForestMaker::makeTree5() {
+    // Initialize sphere OpenGLShape.
+    float pi = 3.1415926535;
+    float scaleRadius = random();
+    float scaleHeight = random();
+
+    // Array of branches that branch off from each node.
+    std::vector<branch> branches(0);
+    branches.push_back({scaleRadius, scaleHeight, 1, -1, 1, 1});
+    branches.push_back({scaleRadius, scaleHeight, 0, 1, 1, 1});
+    branches.push_back({scaleRadius, scaleHeight,  0, 1, -1, 0});
+    branches.push_back({scaleRadius, scaleHeight, 1, 1, 1, 0});
+
+    // Define the rule constants and add the rule to the dictionary
+    std::map<char, lSystemRule> rulesDict = {};
+    vec3 angle(random(0, pi/2),
+               random(0, pi/2),
+               random(0, pi/2));
+
+    rulesDict['F'] = lSystemRule{angle, random(), random(0, 0.08), random(0, 0.5), branches, 6};
+
+    // Set the location of the tree and add it to our forest.
+    mat4x4 modelMatrix = glm::translate(glm::mat4(1.0f), vec3(-1.f, 0.0f, 0.0f));
+    tree t = tree{std::make_unique<LSystemTree>(rulesDict), modelMatrix};
+    m_trees.push_back(t);
+}
+
+// Just some quick helper functions to clean up the code.
+float ForestMaker::random(float low, float high) {
+    return ((double)std::rand()/RAND_MAX)*(high - low) + low;
+}
+float ForestMaker::random() {return ((double)std::rand()/RAND_MAX); }

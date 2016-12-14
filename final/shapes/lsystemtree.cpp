@@ -62,7 +62,6 @@ std::vector<float> LSystemTree::makeBranch(int recursionDepth, int heightTessela
     Transform = rotate(Transform, angle.x, vec3(0, 1, 0));
     Transform = rotate(Transform, angle.y, vec3(1, 0, 0));
     Transform = rotate(Transform, angle.z, vec3(0, 1, 0));
-
     Transform = translate(Transform, vec3(0, height/2, 0));
     return applyTransformToVerts(verts, Transform);
 }

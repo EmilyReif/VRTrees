@@ -1,0 +1,19 @@
+Zach
+--------------------------
+-VR stuff
+
+Emily
+--------------------------
+-Procedural noise shading
+-Grass
+-Make trees/bushes
+
+Max
+-------------------------
+-Animation of L-Systems (growing)
+-Terrain
+-Extra bushes/stuff
+
+
+
+
