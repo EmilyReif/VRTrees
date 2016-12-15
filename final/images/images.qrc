@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/images">
-        <file>bark_tex.jpg</file>
-        <file>bark_tex2.jpg</file>
-        <file>bark_tex3.jpg</file>
-    </qresource>
-</RCC>
