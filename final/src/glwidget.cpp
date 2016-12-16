@@ -18,7 +18,7 @@
 #include "../shapes/OpenGLShape.h"
 #include "../shapes/lsystemtree.h"
 #include "forestmaker.h"
-
+#include "terrain/terrain.h"
 
 using namespace CS123::GL;
 
@@ -54,6 +54,7 @@ void GLWidget::initializeGL() {
 
     m_quad = std::make_unique<Square>();
     m_forestMaker = std::make_unique<ForestMaker>();
+    m_terrain.init();
 
     // Initialize textures.
 
@@ -94,6 +95,9 @@ void GLWidget::draw() {
     glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "projection"),  1, GL_FALSE, value_ptr(m_projection));
     glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, value_ptr(loc));
 
+    m_terrain.draw();
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_texID);
     std::vector<tree> trees = m_forestMaker->getTrees();
     {
         int numTrees = trees.size();

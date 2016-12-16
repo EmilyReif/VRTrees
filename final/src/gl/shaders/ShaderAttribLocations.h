@@ -23,7 +23,7 @@ namespace CS123 { namespace GL { namespace ShaderAttrib {
     const GLuint TEXCOORD1 = 6;
     const GLuint TEXCOORD2 = 7;
     const GLuint TEXCOORD3 = 8;
-
+    const GLuint BRANCH_DEPTH = 10;
 
     // Starting at this index,
     const GLuint SPECIAL0 = 9;

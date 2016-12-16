@@ -50,6 +50,7 @@ void OpenGLShape::sendVertexData(std::vector<float> verts) {
     int dataSizePerVert = 3;
     int dataSizePerVertUV = 2;
     int bytesPerFloat = 4;
+    int dataSizePerBranchDepth = 1;
     setData(verts.data());
     setSize(verts.size());
     setDrawMode(VBO::GEOMETRY_LAYOUT::LAYOUT_TRIANGLE_STRIP);
@@ -69,6 +70,12 @@ void OpenGLShape::sendVertexData(std::vector<float> verts) {
                  2 * dataSizePerVert * bytesPerFloat,
                  VBOAttribMarker::DATA_TYPE::FLOAT,
                  false);
+//    setAttribute(ShaderAttrib::BRANCH_DEPTH,
+//                 dataSizePerBranchDepth,
+//                 (2 * dataSizePerVert * bytesPerFloat) + (dataSizePerVertUV * bytesPerFloat),
+//                 VBOAttribMarker::DATA_TYPE::INT,
+//                 false
+//                 );
     buildVAO();
 }
 
@@ -102,6 +109,14 @@ void OpenGLShape::setAttribute( GLuint index,
 void OpenGLShape::buildVAO() {
     CS123::GL::VBO vbo = VBO(m_data, m_size, m_markers, m_drawMode);
     m_VAO = std::make_unique<VAO>(vbo, m_numVertices);
+}
+
+void OpenGLShape::setTerrainData(GLfloat *data, int size, VBO::GEOMETRY_LAYOUT drawMode, int numVertices)
+{
+    m_data = data;
+    m_size = size;
+    m_drawMode = drawMode;
+    m_numVertices = numVertices;
 }
 
 void OpenGLShape::setParams(int p1, int p2, int p3) {

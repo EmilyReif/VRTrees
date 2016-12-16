@@ -54,7 +54,9 @@ SOURCES += \
     shapes/Cap.cpp \
     shapes/lsystemtree.cpp \
     lsystem/lsystemgenerator.cpp \
-    src/forestmaker.cpp
+    src/forestmaker.cpp \
+    terrain/terrain.cpp \
+    terrain/terrainshape.cpp
 
 
 HEADERS += \
@@ -92,7 +94,9 @@ HEADERS += \
     shapes/lsystemtree.h \
     lsystem/lsystemgenerator.h \
     shapes/forestmaker.h \
-    forestmaker.h
+    forestmaker.h \
+    terrain/terrain.h \
+    terrain/terrainshape.h
 
 FORMS += src/mainwindow.ui
 
