@@ -25,6 +25,8 @@ private:
     void makeTree3();
     void makeTree4();
     void makeTree5();
+    void makeTree6();
+    void makeStandardForest();
     float random(float high, float low);
     float random();
 };

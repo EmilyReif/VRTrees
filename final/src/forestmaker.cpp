@@ -5,19 +5,38 @@
 #include <glm/vec3.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+#include <glm/gtx/string_cast.hpp>
 
 ForestMaker::ForestMaker():
     m_trees(std::vector<tree>())
 {
-    makeTree0();
-    makeTree1();
-    makeTree2();
-    makeTree3();
-    makeTree4();
+    makeStandardForest();
 }
 
 ForestMaker:: ~ForestMaker()
 {
+}
+
+void ForestMaker::makeStandardForest ()
+{
+    for (int i = 0; i < 2; i++) {
+        makeTree0();
+        makeTree1();
+        makeTree2();
+        makeTree3();
+        makeTree4();
+    }
+    int numTrees = m_trees.size();
+
+    for (int i = 0; i < numTrees; i++) {
+        mat4 transform = glm::mat4(1.0f);
+        transform = glm::scale(transform, vec3(random(0.5, 1.5)));
+        vec3 trans = vec3(random(-2, 2), 0.0f, random(-2, 2));
+        transform = translate(transform, trans);
+        float angle = random(0, 5);
+        transform = glm::rotate(transform, angle, vec3(0.f,1.f,0.f));
+        m_trees[i].modelMatrix = transform;
+    }
 }
 
 std::vector<tree> ForestMaker::getTrees() {
@@ -41,10 +60,10 @@ void ForestMaker::makeTree0() {
     // Define the rule constants and add the rule to the dictionary
     std::map<char, lSystemRule> rulesDict = {};
     vec3 angle(0, pi/10, 0);
-    rulesDict['F'] = lSystemRule{angle, 0.5, 0.08, 0.5, branches, 6};
+    rulesDict['F'] = lSystemRule{angle, 0.5, 0.08, .50, branches, 6};
 
     // Set the location of the tree and add it to our forest.
-    mat4x4 modelMatrix = glm::translate(glm::mat4(1.0f), vec3(-2.0f, 0.0f, 0.0f));
+    mat4x4 modelMatrix = glm::translate(glm::mat4(1.0f), vec3(random(-1, 1), 0.0f, random(-1, 1)));
     tree t = tree{std::make_unique<LSystemTree>(rulesDict), modelMatrix};
     m_trees.push_back(t);
 }
@@ -66,10 +85,10 @@ void ForestMaker::makeTree1() {
     // Define the rule constants and add the rule to the dictionary
     std::map<char, lSystemRule> rulesDict = {};
     vec3 angle(pi/2, pi/5, pi/7);
-    rulesDict['F'] = lSystemRule{angle, 0.5, 0.08, 0.5, branches, 6};
+    rulesDict['F'] = lSystemRule{angle, 0.5, 0.08, .50, branches, 6};
 
     // Set the location of the tree and add it to our forest.
-    mat4x4 modelMatrix = glm::translate(glm::mat4(1.0f), vec3(-1.f, 0.0f, 0.0f));
+    mat4x4 modelMatrix = glm::translate(glm::mat4(1.0f), vec3(random(-1, 1), 0.0f, random(-1, 1)));
     tree t = tree{std::make_unique<LSystemTree>(rulesDict), modelMatrix};
     m_trees.push_back(t);
 }
@@ -89,10 +108,10 @@ void ForestMaker::makeTree2() {
     // Define the rule constants and add the rule to the dictionary
     std::map<char, lSystemRule> rulesDict = {};
     vec3 angle(0, pi/2, 0);
-    rulesDict['F'] = lSystemRule{angle, 1, 0.08, 0.5, branches, 6};
+    rulesDict['F'] = lSystemRule{angle, 1, 0.08, .50, branches, 6};
 
     // Set the location of the tree and add it to our forest.
-    mat4x4 modelMatrix = glm::translate(glm::mat4(1.0f), vec3(0.f, 0.0f, 0.0f));
+    mat4x4 modelMatrix = glm::translate(glm::mat4(1.0f), vec3(random(-1, 1), 0.0f, random(-1, 1)));
     tree t = tree{std::make_unique<LSystemTree>(rulesDict), modelMatrix};
     m_trees.push_back(t);
 }
@@ -115,10 +134,10 @@ void ForestMaker::makeTree3() {
     // Define the rule constants and add the rule to the dictionary
     std::map<char, lSystemRule> rulesDict = {};
     vec3 angle(pi/6, pi/8, pi/2);
-    rulesDict['F'] = lSystemRule{angle, .75, 0.03, 1, branches, 6};
+    rulesDict['F'] = lSystemRule{angle, .75, 0.03, .50, branches, 6};
 
     // Set the location of the tree and add it to our forest.
-    mat4x4 modelMatrix = glm::translate(glm::mat4(1.0f), vec3(1.f, 0.0f, 0.0f));
+    mat4x4 modelMatrix = glm::translate(glm::mat4(1.0f), vec3(random(-1, 1), 0.0f, random(-1, 1)));
     tree t = tree{std::make_unique<LSystemTree>(rulesDict), modelMatrix};
     m_trees.push_back(t);
 }
@@ -141,13 +160,40 @@ void ForestMaker::makeTree4() {
     // Define the rule constants and add the rule to the dictionary.
     std::map<char, lSystemRule> rulesDict = {};
     vec3 angle(0, pi/12, pi/3);
-    rulesDict['F'] = lSystemRule{angle, 1, 0.02, 0.5, branches, 6};
+    rulesDict['F'] = lSystemRule{angle, 1, 0.02, .50, branches, 6};
 
     // Set the location of the tree and add it to our forest.
-    mat4x4 modelMatrix = glm::translate(glm::mat4(1.0f), vec3(2.f, 0.0f, 0.0f));
+    mat4x4 modelMatrix = glm::translate(glm::mat4(1.0f), vec3(random(-1, 1), 0.0f, random(-1, 1)));
     tree t = tree{std::make_unique<LSystemTree>(rulesDict), modelMatrix};
     m_trees.push_back(t);
 }
+
+// Grass! (identical to tree5 but verrrry small.)
+void ForestMaker::makeTree6() {
+    // Initialize sphere OpenGLShape.
+    float pi = 3.1415926535;
+    float scaleRadius = 0.5;
+    float scaleHeight = .8;
+    float scaleHeight1 = 0.5;
+
+    // Array of branches that branch off from each node.
+    std::vector<branch> branches(0);
+    branches.push_back({scaleRadius, scaleHeight, 0, 1, -1, 1});
+    branches.push_back({scaleRadius, scaleHeight1, 0, 1, 1, 1});
+    branches.push_back({scaleRadius, scaleHeight1, 0, -1, 1, 0});
+    branches.push_back({scaleRadius, scaleHeight, 0, 1, 1, 0});
+
+    // Define the rule constants and add the rule to the dictionary.
+    std::map<char, lSystemRule> rulesDict = {};
+    vec3 angle(0, pi/12, pi/3);
+    rulesDict['F'] = lSystemRule{angle, 1, 0.02, 0.1, branches, };
+
+    // Set the location of the tree and add it to our forest.
+    mat4x4 modelMatrix = glm::translate(glm::mat4(1.0f), vec3(random(-1, 1), 0.0f, random(-1, 1)));
+    tree t = tree{std::make_unique<LSystemTree>(rulesDict), modelMatrix};
+    m_trees.push_back(t);
+}
+
 
 
 // Random version of 3d tree
@@ -170,10 +216,10 @@ void ForestMaker::makeTree5() {
                random(0, pi/2),
                random(0, pi/2));
 
-    rulesDict['F'] = lSystemRule{angle, random(), random(0, 0.08), random(0, 0.5), branches, 6};
+    rulesDict['F'] = lSystemRule{angle, random(), random(0, 0.08), random(0, .50), branches, 6};
 
     // Set the location of the tree and add it to our forest.
-    mat4x4 modelMatrix = glm::translate(glm::mat4(1.0f), vec3(-1.f, 0.0f, 0.0f));
+    mat4x4 modelMatrix = glm::translate(glm::mat4(1.0f), vec3(random(-1, 1), 0.0f, random(-1, 1)));
     tree t = tree{std::make_unique<LSystemTree>(rulesDict), modelMatrix};
     m_trees.push_back(t);
 }
