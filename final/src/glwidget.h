@@ -44,7 +44,6 @@ private:
     int m_width;
     int m_height;
 
-    GLuint m_texID;
     GLuint m_texNoiseID;
     GLuint m_phongProgram;
     GLuint m_deferredSecondProgram;
