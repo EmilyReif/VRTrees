@@ -21,19 +21,19 @@ void Square::setVertexData() {
     std::vector<GLfloat> quadData = {
                                     -1.f, +1.f, 0.f,
                                      1.f, 0.f, 0.f,
-                                     0.f, 1.f,
+                                     0.f, 1.f, 0.f,
 
                                      -1.f, -1.f, 0.f,
                                      1.f, 0.f, 0.f,
-                                     0.f, 0.f,
+                                     0.f, 0.f, 0.f,
 
                                      +1.f, +1.f, 0.f,
                                       1.f, 0.f, 0.f,
-                                      1.f, 1.f,
+                                      1.f, 1.f, 0.f,
 
                                      +1.f, -1.f, 0.f,
                                      1.f, 0.f, 0.f,
-                                     1.f, 0.f
+                                     1.f, 0.f, 0.f
                                     };
     OpenGLShape::sendVertexData(quadData);
 }

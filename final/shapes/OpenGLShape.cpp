@@ -70,12 +70,11 @@ void OpenGLShape::sendVertexData(std::vector<float> verts) {
                  2 * dataSizePerVert * bytesPerFloat,
                  VBOAttribMarker::DATA_TYPE::FLOAT,
                  false);
-//    setAttribute(ShaderAttrib::BRANCH_DEPTH,
-//                 dataSizePerBranchDepth,
-//                 (2 * dataSizePerVert * bytesPerFloat) + (dataSizePerVertUV * bytesPerFloat),
-//                 VBOAttribMarker::DATA_TYPE::INT,
-//                 false
-//                 );
+    setAttribute(ShaderAttrib::TEXCOORD1,
+                 dataSizePerBranchDepth,
+                 (2 * dataSizePerVert * bytesPerFloat) + (dataSizePerVertUV * bytesPerFloat),
+                 VBOAttribMarker::DATA_TYPE::FLOAT,
+                 false);
     buildVAO();
 }
 

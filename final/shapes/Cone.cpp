@@ -17,7 +17,7 @@ Cone:: ~Cone()
 {
 }
 
-std::vector<float> Cone::createVertsVector(int heightTesselation, int thetaTesselation, float radius, float height) {
+std::vector<float> Cone::createVertsVector(int heightTesselation, int thetaTesselation, float radius, float height, int branchIndex) {
     float pi = 3.14159265358979323;
     float thetaStep = 2 * pi/thetaTesselation;
     float heightStep = 2 * height/heightTesselation;
@@ -43,7 +43,9 @@ std::vector<float> Cone::createVertsVector(int heightTesselation, int thetaTesse
 
             // Top UV
             verts.push_back(static_cast<float>(j)/thetaTesselation);
-            verts.push_back(-static_cast<float>(i + 1)/heightTesselation);
+            verts.push_back(static_cast<float>(i + 1)/heightTesselation);
+
+            verts.push_back(static_cast<float>(branchIndex));
 
             // Bottom vertex position
             verts.push_back(radius*heightStep*linearScale * std::cos(-thetaStep*j)); // X
@@ -57,16 +59,18 @@ std::vector<float> Cone::createVertsVector(int heightTesselation, int thetaTesse
 
             // Top UV
             verts.push_back(static_cast<float>(j)/thetaTesselation);
-            verts.push_back(-static_cast<float>(i)/heightTesselation);
+            verts.push_back(static_cast<float>(i)/heightTesselation);
+
+            verts.push_back(static_cast<float>(branchIndex));
         }
         // Add degenerate triangles.
-        for (int j = 0; j < 16; j++) {
-            verts.push_back(verts[verts.size() - 8]);
+        for (int j = 0; j < 18; j++) {
+            verts.push_back(verts[verts.size() - 9]);
         }
     }
     // Add degenerate triangles.
-    for (int i = 0; i < 16; i++) {
-        verts.insert(verts.begin(), verts[8 - 1]);
+    for (int i = 0; i < 18; i++) {
+        verts.insert(verts.begin(), verts[9 - 1]);
     }
     return verts;
 }
@@ -77,7 +81,7 @@ void Cone::setVertexData() {
     int thetaTesselation = getParam2() + 2;
     float r = 0.5;
 
-    std::vector<float> verts = createVertsVector(heightTesselation, thetaTesselation, r, r);
+    std::vector<float> verts = createVertsVector(heightTesselation, thetaTesselation, r, r,0);
     std::vector<float> cap = m_cap.createVertsVector(heightTesselation, thetaTesselation, r, -r/2, -1);
     verts.insert(verts.end(), cap.begin(), cap.end());
     OpenGLShape::sendVertexData(verts);

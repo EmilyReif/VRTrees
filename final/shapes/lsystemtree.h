@@ -29,7 +29,7 @@ struct lSystemRule {
 
 
 class LSystemTree
-    : public OpenGLShape
+        : public OpenGLShape
 {
 
 public:
@@ -41,6 +41,9 @@ protected:
     virtual void setVertexData();
     std::vector<float> applyTransformToVerts(std::vector<float> &verts, mat4 transform);
     std::map<char, lSystemRule> m_rulesDict;
+
+private:
+    int maxDepth;
 };
 
 
