@@ -513,14 +513,16 @@ compiler_rcc_clean:
 	-$(DEL_FILE) qrc_shaders.cpp qrc_images.cpp
 qrc_shaders.cpp: ../final/shaders/shaders.qrc \
 		../final/shaders/deferredShadingFirst.frag \
-		../final/shaders/quad.vert \
+		../final/shaders/deferredShadingSecond.frag \
 		../final/shaders/deferredShadingFirst.vert \
-		../final/shaders/deferredShadingSecond.frag
+		../final/shaders/quad.vert
 	/contrib/projects/qt5.2.0/5.2.0/gcc_64/bin/rcc -name shaders ../final/shaders/shaders.qrc -o qrc_shaders.cpp
 
 qrc_images.cpp: ../final/images/images.qrc \
-		../final/images/bark_tex3.jpg \
+		../final/images/noiseSmall.png \
 		../final/images/bark_tex.jpg \
+		../final/images/bark_tex3.jpg \
+		../final/images/noise2d.png \
 		../final/images/bark_tex2.jpg
 	/contrib/projects/qt5.2.0/5.2.0/gcc_64/bin/rcc -name images ../final/images/images.qrc -o qrc_images.cpp
 

@@ -14,7 +14,6 @@ void main() {
     texc = texCoord;
     pos =  (model * vec4(ObjectSpace_position, 1.0)).xyz;
     normal = inverse(transpose(mat3(model))) * ObjectSpace_normal;
-    pos = pos * 0.5 + 0.5;
     normal = normal * 0.5 + 0.5;
     gl_Position = projection * view * model * vec4(ObjectSpace_position, 1.0);
 }

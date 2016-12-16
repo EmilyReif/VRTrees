@@ -3,5 +3,7 @@
         <file>bark_tex.jpg</file>
         <file>bark_tex2.jpg</file>
         <file>bark_tex3.jpg</file>
+        <file>noise2d.png</file>
+        <file>noiseSmall.png</file>
     </qresource>
 </RCC>

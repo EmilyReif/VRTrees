@@ -45,8 +45,7 @@ private:
     int m_width;
     int m_height;
 
-    GLuint m_texID;
-
+    GLuint m_texNoiseID;
     GLuint m_phongProgram;
     GLuint m_deferredSecondProgram;
 
@@ -58,6 +57,7 @@ private:
 
     bool m_firstPass;
     bool m_evenPass;
+    float frandom(float high, float low);
 
     mat4 m_view, m_projection;
 

@@ -30,7 +30,7 @@ GLWidget::GLWidget(QGLFormat format, QWidget *parent)
       m_forestMaker(nullptr),
       m_defShadingFBO(nullptr),
       m_angleX(-0.5f), m_angleY(0.5f), m_zoom(4.f),
-      m_texID(0)
+      m_texNoiseID(0)
 {
 
 }
@@ -56,23 +56,26 @@ void GLWidget::initializeGL() {
     m_forestMaker = std::make_unique<ForestMaker>();
     m_terrain.init();
 
-
     // Initialize textures.
-    QImage image(":/images/bark_tex3.jpg");
-    glGenTextures(1, &m_texID);
-    glBindTexture(GL_TEXTURE_2D, m_texID);
+
+    QImage imageNoise(":/images/noiseSmall.png");
+    glGenTextures(1, &m_texNoiseID);
+    glBindTexture(GL_TEXTURE_2D, m_texNoiseID);
     glTexImage2D(
          GL_TEXTURE_2D,
          0,
          GL_RGBA,
-         image.width(),
-         image.height(),
+         imageNoise.width(),
+         imageNoise.height(),
          0,
          GL_RGBA,
          GL_UNSIGNED_BYTE,
-         image.bits());
+         imageNoise.bits());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void GLWidget::paintGL() {
@@ -85,7 +88,6 @@ void GLWidget::draw() {
     m_defShadingFBO->bind();
     glViewport(0, 0, m_width, m_height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 
     mat4x4 loc = translate(vec3(0.0f, 0.0f, 0.0f));
 
@@ -100,34 +102,18 @@ void GLWidget::draw() {
     {
         int numTrees = trees.size();
         for (int i = 0; i < numTrees; i++) {
-//            loc = trees[i].modelMatrix;
-            float x = i - numTrees/2.f;
-            loc = translate(vec3(x, 0.0, 0));
+            loc = trees[i].modelMatrix;
             glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, value_ptr(loc));
             trees[i].treeShape->draw();
         }
-
-//        int numTrees = trees.size();
-//        for (int i = 0; i < numTrees; i++) {
-//            for (int j = 0; j < numTrees; j++) {
-////            loc = trees[i].modelMatrix;
-//                float x = i - numTrees/2.f;
-//                float z = j - numTrees/2.f;
-//                loc = translate(vec3(x, 0.0, z));
-//                glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, value_ptr(loc));
-//                trees[i].treeShape->draw();
-//            }
-//        }
-
     }
 
     m_defShadingFBO->unbind();
-    glBindTexture(GL_TEXTURE_2D, 0);
 
     glUseProgram(m_deferredSecondProgram);
     glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "NormalAndDiffuse"), 0);
     glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "PosAndSpec"), 1);
-    glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "Color"), 2);
+    glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "Noise"), 2);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glActiveTexture(GL_TEXTURE0);
@@ -135,11 +121,20 @@ void GLWidget::draw() {
     glActiveTexture(GL_TEXTURE1);
     m_defShadingFBO->getColorAttachment(1).bind();
     glActiveTexture(GL_TEXTURE2);
-    m_defShadingFBO->getColorAttachment(2).bind();
+    glBindTexture(GL_TEXTURE_2D, m_texNoiseID);
+
 
     glUniformMatrix4fv(glGetUniformLocation(m_deferredSecondProgram, "view"),  1, GL_FALSE, value_ptr(m_view));
+    glUniformMatrix4fv(glGetUniformLocation(m_deferredSecondProgram, "projection"),  1, GL_FALSE, value_ptr(m_projection));
     m_quad->draw();
     glUseProgram(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+}
+
+// Just some quick helper functions to clean up the code.
+float GLWidget::frandom(float low, float high) {
+    return ((double)std::rand()/RAND_MAX)*(high - low) + low;
 }
 
 // This is called at the beginning of the program between initializeGL and
@@ -149,7 +144,13 @@ void GLWidget::resizeGL(int w, int h) {
     m_height = h;
 
     // TODO: [Task 5] Initialize FBOs here, with dimensions m_width and m_height.
-    m_defShadingFBO = std::make_unique<FBO>(3, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height, TextureParameters::WRAP_METHOD::REPEAT, TextureParameters::FILTER_METHOD::LINEAR);
+    m_defShadingFBO = std::make_unique<FBO>(
+                2,
+                FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY,
+                m_width, m_height,
+                TextureParameters::WRAP_METHOD::REPEAT,
+                TextureParameters::FILTER_METHOD::LINEAR,
+                GL_FLOAT);
     rebuildMatrices();
 }
 
