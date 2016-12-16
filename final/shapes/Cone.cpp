@@ -11,7 +11,6 @@ Cone::Cone()
     : OpenGLShape(),
       m_cap()
 {
-    setVertexData();
 }
 
 Cone:: ~Cone()

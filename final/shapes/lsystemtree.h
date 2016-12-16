@@ -40,7 +40,6 @@ public:
 protected:
     virtual void setVertexData();
     std::vector<float> applyTransformToVerts(std::vector<float> &verts, mat4 transform);
-    Cone m_cone;
     std::map<char, lSystemRule> m_rulesDict;
 };
 

@@ -75,7 +75,9 @@ SOURCES       = ../final/src/mainwindow.cpp \
 		../final/shapes/Cap.cpp \
 		../final/shapes/lsystemtree.cpp \
 		../final/lsystem/lsystemgenerator.cpp \
-		../final/src/forestmaker.cpp qrc_shaders.cpp \
+		../final/src/forestmaker.cpp \
+		../final/terrain/terrain.cpp \
+		../final/terrain/terrainshape.cpp qrc_shaders.cpp \
 		qrc_images.cpp \
 		moc_mainwindow.cpp \
 		moc_glwidget.cpp \
@@ -111,6 +113,8 @@ OBJECTS       = mainwindow.o \
 		lsystemtree.o \
 		lsystemgenerator.o \
 		forestmaker.o \
+		terrain.o \
+		terrainshape.o \
 		qrc_shaders.o \
 		qrc_images.o \
 		moc_mainwindow.o \
@@ -487,7 +491,7 @@ qmake_all: FORCE
 
 dist: 
 	@test -d .tmp/final1.0.0 || mkdir -p .tmp/final1.0.0
-	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/final1.0.0/ && $(COPY_FILE) --parents ../final/shaders/shaders.qrc ../final/images/images.qrc .tmp/final1.0.0/ && $(COPY_FILE) --parents ../final/src/mainwindow.h ../final/src/glwidget.h ../final/src/openglshape.h ../final/cs123_lib/resourceloader.h ../final/cs123_lib/errorchecker.h ../final/src/gl/datatype/FBO.h ../final/src/gl/datatype/VBO.h ../final/src/gl/datatype/VBOAttribMarker.h ../final/src/gl/datatype/VAO.h ../final/src/gl/datatype/IBO.h ../final/src/gl/shaders/ShaderAttribLocations.h ../final/src/gl/textures/Texture.h ../final/src/gl/textures/Texture2D.h ../final/src/gl/textures/TextureParameters.h ../final/src/gl/textures/TextureParametersBuilder.h ../final/src/gl/textures/RenderBuffer.h ../final/src/gl/textures/DepthBuffer.h ../final/src/gl/GLDebug.h ../final/src/databinding.h ../final/src/settings.h ../../glew-1.10.0/include/GL/glew.h ../../final/final/glwidget.h ../final/shapes/Torus.h ../final/shapes/Square.h ../final/shapes/Sphere.h ../final/shapes/OpenGLShape.h ../final/shapes/ModeratelyComplexShape.h ../final/shapes/Cylinder.h ../final/shapes/Cone.h ../final/shapes/Cap.h src/lsystemtree.h ../final/shapes/lsystemtree.h ../final/lsystem/lsystemgenerator.h shapes/forestmaker.h forestmaker.h .tmp/final1.0.0/ && $(COPY_FILE) --parents ../final/src/mainwindow.cpp ../final/src/main.cpp ../final/src/glwidget.cpp ../final/cs123_lib/resourceloader.cpp ../final/cs123_lib/errorchecker.cpp ../final/src/gl/datatype/FBO.cpp ../final/src/gl/datatype/VBO.cpp ../final/src/gl/datatype/VBOAttribMarker.cpp ../final/src/gl/datatype/VAO.cpp ../final/src/gl/datatype/IBO.cpp ../final/src/gl/textures/Texture.cpp ../final/src/gl/textures/Texture2D.cpp ../final/src/gl/textures/TextureParameters.cpp ../final/src/gl/textures/TextureParametersBuilder.cpp ../final/src/gl/textures/RenderBuffer.cpp ../final/src/gl/textures/DepthBuffer.cpp ../final/src/gl/GLDebug.cpp ../final/src/databinding.cpp ../final/src/settings.cpp ../../glew-1.10.0/src/glew.c ../final/shapes/Torus.cpp ../final/shapes/Square.cpp ../final/shapes/Sphere.cpp ../final/shapes/OpenGLShape.cpp ../final/shapes/ModeratelyComplexShape.cpp ../final/shapes/Cylinder.cpp ../final/shapes/Cone.cpp ../final/shapes/Cap.cpp ../final/shapes/lsystemtree.cpp ../final/lsystem/lsystemgenerator.cpp ../final/src/forestmaker.cpp .tmp/final1.0.0/ && $(COPY_FILE) --parents ../final/src/mainwindow.ui .tmp/final1.0.0/ && (cd `dirname .tmp/final1.0.0` && $(TAR) final1.0.0.tar final1.0.0 && $(COMPRESS) final1.0.0.tar) && $(MOVE) `dirname .tmp/final1.0.0`/final1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/final1.0.0
+	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/final1.0.0/ && $(COPY_FILE) --parents ../final/shaders/shaders.qrc ../final/images/images.qrc .tmp/final1.0.0/ && $(COPY_FILE) --parents ../final/src/mainwindow.h ../final/src/glwidget.h ../final/src/openglshape.h ../final/cs123_lib/resourceloader.h ../final/cs123_lib/errorchecker.h ../final/src/gl/datatype/FBO.h ../final/src/gl/datatype/VBO.h ../final/src/gl/datatype/VBOAttribMarker.h ../final/src/gl/datatype/VAO.h ../final/src/gl/datatype/IBO.h ../final/src/gl/shaders/ShaderAttribLocations.h ../final/src/gl/textures/Texture.h ../final/src/gl/textures/Texture2D.h ../final/src/gl/textures/TextureParameters.h ../final/src/gl/textures/TextureParametersBuilder.h ../final/src/gl/textures/RenderBuffer.h ../final/src/gl/textures/DepthBuffer.h ../final/src/gl/GLDebug.h ../final/src/databinding.h ../final/src/settings.h ../../glew-1.10.0/include/GL/glew.h ../../final/final/glwidget.h ../final/shapes/Torus.h ../final/shapes/Square.h ../final/shapes/Sphere.h ../final/shapes/OpenGLShape.h ../final/shapes/ModeratelyComplexShape.h ../final/shapes/Cylinder.h ../final/shapes/Cone.h ../final/shapes/Cap.h src/lsystemtree.h ../final/shapes/lsystemtree.h ../final/lsystem/lsystemgenerator.h shapes/forestmaker.h forestmaker.h ../final/terrain/terrain.h ../final/terrain/terrainshape.h .tmp/final1.0.0/ && $(COPY_FILE) --parents ../final/src/mainwindow.cpp ../final/src/main.cpp ../final/src/glwidget.cpp ../final/cs123_lib/resourceloader.cpp ../final/cs123_lib/errorchecker.cpp ../final/src/gl/datatype/FBO.cpp ../final/src/gl/datatype/VBO.cpp ../final/src/gl/datatype/VBOAttribMarker.cpp ../final/src/gl/datatype/VAO.cpp ../final/src/gl/datatype/IBO.cpp ../final/src/gl/textures/Texture.cpp ../final/src/gl/textures/Texture2D.cpp ../final/src/gl/textures/TextureParameters.cpp ../final/src/gl/textures/TextureParametersBuilder.cpp ../final/src/gl/textures/RenderBuffer.cpp ../final/src/gl/textures/DepthBuffer.cpp ../final/src/gl/GLDebug.cpp ../final/src/databinding.cpp ../final/src/settings.cpp ../../glew-1.10.0/src/glew.c ../final/shapes/Torus.cpp ../final/shapes/Square.cpp ../final/shapes/Sphere.cpp ../final/shapes/OpenGLShape.cpp ../final/shapes/ModeratelyComplexShape.cpp ../final/shapes/Cylinder.cpp ../final/shapes/Cone.cpp ../final/shapes/Cap.cpp ../final/shapes/lsystemtree.cpp ../final/lsystem/lsystemgenerator.cpp ../final/src/forestmaker.cpp ../final/terrain/terrain.cpp ../final/terrain/terrainshape.cpp .tmp/final1.0.0/ && $(COPY_FILE) --parents ../final/src/mainwindow.ui .tmp/final1.0.0/ && (cd `dirname .tmp/final1.0.0` && $(TAR) final1.0.0.tar final1.0.0 && $(COMPRESS) final1.0.0.tar) && $(MOVE) `dirname .tmp/final1.0.0`/final1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/final1.0.0
 
 
 clean:compiler_clean 
@@ -512,16 +516,16 @@ compiler_rcc_make_all: qrc_shaders.cpp qrc_images.cpp
 compiler_rcc_clean:
 	-$(DEL_FILE) qrc_shaders.cpp qrc_images.cpp
 qrc_shaders.cpp: ../final/shaders/shaders.qrc \
-		../final/shaders/deferredShadingFirst.frag \
 		../final/shaders/deferredShadingSecond.frag \
+		../final/shaders/quad.vert \
 		../final/shaders/deferredShadingFirst.vert \
-		../final/shaders/quad.vert
+		../final/shaders/deferredShadingFirst.frag
 	/contrib/projects/qt5.2.0/5.2.0/gcc_64/bin/rcc -name shaders ../final/shaders/shaders.qrc -o qrc_shaders.cpp
 
 qrc_images.cpp: ../final/images/images.qrc \
 		../final/images/noiseSmall.png \
-		../final/images/bark_tex.jpg \
 		../final/images/bark_tex3.jpg \
+		../final/images/bark_tex.jpg \
 		../final/images/noise2d.png \
 		../final/images/bark_tex2.jpg
 	/contrib/projects/qt5.2.0/5.2.0/gcc_64/bin/rcc -name images ../final/images/images.qrc -o qrc_images.cpp
@@ -759,6 +763,8 @@ moc_mainwindow.cpp: ../../../../../../sys/shared/psfu/contrib/projects/qt5.2.0/5
 		../final/src/forestmaker.h \
 		../final/src/gl/datatype/FBO.h \
 		../final/src/gl/textures/TextureParameters.h \
+		../final/terrain/terrain.h \
+		../final/terrain/terrainshape.h \
 		../final/src/mainwindow.h
 	/contrib/projects/qt5.2.0/5.2.0/gcc_64/bin/moc $(DEFINES) $(INCPATH) ../final/src/mainwindow.h -o moc_mainwindow.cpp
 
@@ -986,6 +992,8 @@ moc_glwidget.cpp: ../../glew-1.10.0/include/GL/glew.h \
 		../final/src/forestmaker.h \
 		../final/src/gl/datatype/FBO.h \
 		../final/src/gl/textures/TextureParameters.h \
+		../final/terrain/terrain.h \
+		../final/terrain/terrainshape.h \
 		../final/src/glwidget.h
 	/contrib/projects/qt5.2.0/5.2.0/gcc_64/bin/moc $(DEFINES) $(INCPATH) ../final/src/glwidget.h -o moc_glwidget.cpp
 
@@ -1374,6 +1382,8 @@ mainwindow.o: ../final/src/mainwindow.cpp ../final/src/mainwindow.h \
 		../final/src/forestmaker.h \
 		../final/src/gl/datatype/FBO.h \
 		../final/src/gl/textures/TextureParameters.h \
+		../final/terrain/terrain.h \
+		../final/terrain/terrainshape.h \
 		ui_mainwindow.h \
 		../../../../../../sys/shared/psfu/contrib/projects/qt5.2.0/5.2.0/gcc_64/include/QtCore/QVariant \
 		../../../../../../sys/shared/psfu/contrib/projects/qt5.2.0/5.2.0/gcc_64/include/QtWidgets/QAction \
@@ -1676,7 +1686,9 @@ main.o: ../final/src/main.cpp ../../../../../../sys/shared/psfu/contrib/projects
 		../final/lsystem/lsystemgenerator.h \
 		../final/src/forestmaker.h \
 		../final/src/gl/datatype/FBO.h \
-		../final/src/gl/textures/TextureParameters.h
+		../final/src/gl/textures/TextureParameters.h \
+		../final/terrain/terrain.h \
+		../final/terrain/terrainshape.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../final/src/main.cpp
 
 glwidget.o: ../final/src/glwidget.cpp ../final/src/glwidget.h \
@@ -1904,6 +1916,8 @@ glwidget.o: ../final/src/glwidget.cpp ../final/src/glwidget.h \
 		../final/src/forestmaker.h \
 		../final/src/gl/datatype/FBO.h \
 		../final/src/gl/textures/TextureParameters.h \
+		../final/terrain/terrain.h \
+		../final/terrain/terrainshape.h \
 		../final/cs123_lib/resourceloader.h \
 		../final/cs123_lib/errorchecker.h \
 		../../../../../../sys/shared/psfu/contrib/projects/qt5.2.0/5.2.0/gcc_64/include/QtGui/QMouseEvent \
@@ -3236,8 +3250,120 @@ forestmaker.o: ../final/src/forestmaker.cpp ../final/src/forestmaker.h \
 		../final/glm/vector_relational.hpp \
 		../final/glm/integer.hpp \
 		../final/glm/detail/func_integer.hpp \
-		../final/glm/detail/func_integer.inl
+		../final/glm/detail/func_integer.inl \
+		../final/glm/gtx/string_cast.hpp \
+		../final/glm/gtx/integer.hpp \
+		../final/glm/gtx/integer.inl \
+		../final/glm/gtx/quaternion.hpp \
+		../final/glm/gtc/constants.hpp \
+		../final/glm/gtc/constants.inl \
+		../final/glm/gtc/quaternion.hpp \
+		../final/glm/gtc/quaternion.inl \
+		../final/glm/gtx/norm.hpp \
+		../final/glm/gtx/norm.inl \
+		../final/glm/gtx/string_cast.inl
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o forestmaker.o ../final/src/forestmaker.cpp
+
+terrain.o: ../final/terrain/terrain.cpp ../final/terrain/terrain.h \
+		../final/glm/glm.hpp \
+		../final/glm/detail/_fixes.hpp \
+		../final/glm/fwd.hpp \
+		../final/glm/detail/type_int.hpp \
+		../final/glm/detail/setup.hpp \
+		../final/glm/detail/type_float.hpp \
+		../final/glm/detail/type_vec.hpp \
+		../final/glm/detail/precision.hpp \
+		../final/glm/detail/type_mat.hpp \
+		../final/glm/vec2.hpp \
+		../final/glm/detail/type_vec2.hpp \
+		../final/glm/detail/_swizzle.hpp \
+		../final/glm/detail/_swizzle_func.hpp \
+		../final/glm/detail/type_vec2.inl \
+		../final/glm/vec3.hpp \
+		../final/glm/detail/type_vec3.hpp \
+		../final/glm/detail/type_vec3.inl \
+		../final/glm/vec4.hpp \
+		../final/glm/detail/type_vec4.hpp \
+		../final/glm/detail/type_vec4.inl \
+		../final/glm/mat2x2.hpp \
+		../final/glm/detail/type_mat2x2.hpp \
+		../final/glm/detail/type_mat2x2.inl \
+		../final/glm/mat2x3.hpp \
+		../final/glm/detail/type_mat2x3.hpp \
+		../final/glm/detail/type_mat2x3.inl \
+		../final/glm/mat2x4.hpp \
+		../final/glm/detail/type_mat2x4.hpp \
+		../final/glm/detail/type_mat2x4.inl \
+		../final/glm/mat3x2.hpp \
+		../final/glm/detail/type_mat3x2.hpp \
+		../final/glm/detail/type_mat3x2.inl \
+		../final/glm/mat3x3.hpp \
+		../final/glm/detail/type_mat3x3.hpp \
+		../final/glm/detail/type_mat3x3.inl \
+		../final/glm/mat3x4.hpp \
+		../final/glm/detail/type_mat3x4.hpp \
+		../final/glm/detail/type_mat3x4.inl \
+		../final/glm/mat4x2.hpp \
+		../final/glm/detail/type_mat4x2.hpp \
+		../final/glm/detail/type_mat4x2.inl \
+		../final/glm/mat4x3.hpp \
+		../final/glm/detail/type_mat4x3.hpp \
+		../final/glm/detail/type_mat4x3.inl \
+		../final/glm/mat4x4.hpp \
+		../final/glm/detail/type_mat4x4.hpp \
+		../final/glm/detail/type_mat4x4.inl \
+		../final/glm/trigonometric.hpp \
+		../final/glm/detail/func_trigonometric.hpp \
+		../final/glm/detail/func_trigonometric.inl \
+		../final/glm/detail/_vectorize.hpp \
+		../final/glm/detail/type_vec1.hpp \
+		../final/glm/detail/type_vec1.inl \
+		../final/glm/exponential.hpp \
+		../final/glm/detail/func_exponential.hpp \
+		../final/glm/detail/func_exponential.inl \
+		../final/glm/detail/func_vector_relational.hpp \
+		../final/glm/detail/func_vector_relational.inl \
+		../final/glm/common.hpp \
+		../final/glm/detail/func_common.hpp \
+		../final/glm/detail/func_common.inl \
+		../final/glm/packing.hpp \
+		../final/glm/detail/func_packing.hpp \
+		../final/glm/detail/func_packing.inl \
+		../final/glm/detail/type_half.hpp \
+		../final/glm/detail/type_half.inl \
+		../final/glm/geometric.hpp \
+		../final/glm/detail/func_geometric.hpp \
+		../final/glm/detail/func_geometric.inl \
+		../final/glm/matrix.hpp \
+		../final/glm/detail/func_matrix.hpp \
+		../final/glm/detail/func_matrix.inl \
+		../final/glm/vector_relational.hpp \
+		../final/glm/integer.hpp \
+		../final/glm/detail/func_integer.hpp \
+		../final/glm/detail/func_integer.inl \
+		../final/glm/gtx/transform.hpp \
+		../final/glm/gtc/matrix_transform.hpp \
+		../final/glm/gtc/matrix_transform.inl \
+		../final/glm/gtx/transform.inl \
+		../final/glm/gtc/type_ptr.hpp \
+		../final/glm/gtc/quaternion.hpp \
+		../final/glm/gtc/constants.hpp \
+		../final/glm/gtc/constants.inl \
+		../final/glm/gtc/quaternion.inl \
+		../final/glm/gtc/type_ptr.inl \
+		../final/terrain/terrainshape.h \
+		../../glew-1.10.0/include/GL/glew.h \
+		../final/src/gl/datatype/VBO.h \
+		../final/src/gl/datatype/VBOAttribMarker.h \
+		../final/src/gl/shaders/ShaderAttribLocations.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o terrain.o ../final/terrain/terrain.cpp
+
+terrainshape.o: ../final/terrain/terrainshape.cpp ../final/terrain/terrainshape.h \
+		../../glew-1.10.0/include/GL/glew.h \
+		../final/src/gl/datatype/VBO.h \
+		../final/src/gl/datatype/VBOAttribMarker.h \
+		../final/src/gl/datatype/VAO.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o terrainshape.o ../final/terrain/terrainshape.cpp
 
 qrc_shaders.o: qrc_shaders.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_shaders.o qrc_shaders.cpp

@@ -90,6 +90,7 @@ void GLWidget::draw() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     mat4x4 loc = translate(vec3(0.0f, 0.0f, 0.0f));
+    loc = glm::scale(loc, vec3(1, 0.7, 1));
 
     glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "view"),  1, GL_FALSE, value_ptr(m_view));
     glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "projection"),  1, GL_FALSE, value_ptr(m_projection));
@@ -97,7 +98,7 @@ void GLWidget::draw() {
 
     m_terrain.draw();
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_texID);
+//    glBindTexture(GL_TEXTURE_2D, m_texID);
     std::vector<tree> trees = m_forestMaker->getTrees();
     {
         int numTrees = trees.size();

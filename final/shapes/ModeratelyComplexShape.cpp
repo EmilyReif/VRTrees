@@ -9,8 +9,7 @@
 using namespace glm;
 
 ModeratelyComplexShape::ModeratelyComplexShape()
-    : OpenGLShape(),
-    m_cone()
+    : OpenGLShape()
 {
     setVertexData();
 }
@@ -21,7 +20,7 @@ ModeratelyComplexShape:: ~ModeratelyComplexShape()
 
 std::vector<float> ModeratelyComplexShape::makeBranch(int recursionDepth, int heightTesselation, int thetaTesselation, float radius, float height ) {
 
-    std::vector<float> verts = m_cone.createVertsVector(heightTesselation, thetaTesselation, radius, height);
+    std::vector<float> verts = Cone::createVertsVector(heightTesselation, thetaTesselation, radius, height);
     if (recursionDepth < 1) {
         return verts;
     }

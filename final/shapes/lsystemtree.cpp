@@ -13,7 +13,6 @@ using namespace glm;
 
 LSystemTree::LSystemTree(std::map<char, lSystemRule> rules)
     : OpenGLShape(),
-    m_cone(),
     m_rulesDict(rules)
 {
     setVertexData();
@@ -26,7 +25,7 @@ LSystemTree:: ~LSystemTree()
 std::vector<float> LSystemTree::makeBranch(int recursionDepth, int heightTesselation, int thetaTesselation, float radius, float height, vec3 angle, float translation) {
 
     // Generate the verts for the current branch, and return it if we have exceeded maximum recursion depth.
-    std::vector<float> verts = m_cone.createVertsVector(heightTesselation, thetaTesselation, radius, height);
+    std::vector<float> verts = Cone::createVertsVector(heightTesselation, thetaTesselation, radius, height);
     if (recursionDepth < 1) {
         return verts;
     }
