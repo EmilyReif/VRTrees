@@ -20,34 +20,6 @@ float Terrain::randValue(int row, int col) {
  * Returns the object-space position for the terrain vertex at the given row and column.
  */
 glm::vec3 Terrain::getPosition(int row, int col) {
-//    glm::vec3 position;
-//    position.x = 10 * row/m_numRows - 5;
-//    position.z = 10 * col/m_numCols - 5;
-
-//    // TODO: Adjust position.y using value noise.
-//    float r = row/20.f;
-//    float c = col/20.f;
-
-//    int rf = floor(r);
-//    int cf = floor(c);
-//    int rc = ceil(r);
-//    int cc = ceil(c);
-
-//    float A = randValue(rf, cf);
-//    float B = randValue(rf, cc);
-//    float C = randValue(rc, cf);
-//    float D = randValue(rc, cc);
-
-
-//    float cfract = glm::fract(c);
-//    float rfract = glm::fract(r);
-
-
-//    float ABinter = glm::mix(A, B, cfract * cfract * (3-2*cfract));
-//    float CDinter = glm::mix(C, D, cfract * cfract * (3-2*cfract));
-//    position.y = glm::mix(ABinter, CDinter, rfract * rfract * (3-2*rfract));
-
-
     glm::vec3 finalposition = {10 * row/m_numRows - 5, 0,
                               10 * col/m_numCols - 5};
     return finalposition + glm::vec3(0, octave(row, col, 20., 1.) + octave(row, col, 10., .5) + octave(row, col, 5., .25) , 0);
@@ -120,7 +92,6 @@ glm::vec3 Terrain::getNormal(int row, int col) {
 void Terrain::init() {
     // TODO: Change from GL_LINE to GL_FILL in order to render full triangles instead of wireframe.
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
 
     // Initializes a grid of vertices using triangle strips.
     int numVertices = (m_numRows - 1) * (2 * m_numCols + 2);

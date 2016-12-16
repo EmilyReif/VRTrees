@@ -49,7 +49,6 @@ private:
     GLuint m_phongProgram;
     GLuint m_deferredSecondProgram;
 
-    Terrain m_terrain;
     std::unique_ptr<OpenGLShape> m_quad;
     std::unique_ptr<ForestMaker> m_forestMaker;
 
