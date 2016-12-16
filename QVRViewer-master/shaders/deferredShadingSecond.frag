@@ -81,9 +81,9 @@ void main(){
         snow = pow(snow + 0.2, 15);
 //        fragColor += snow ;
 
-        // Add fog.
-        float fogMix = pow(max((length(pos - camPos) - 3), 0) * fog.w, 0.5) - .6;
-        fragColor = mix(fragColor, fog, fogMix);
+//        // Add fog.
+//        float fogMix = pow(max((length(pos - camPos) - 3), 0) * fog.w, 0.5) - .6;
+//        fragColor = mix(fragColor, fog, fogMix);
 
     } else {
         fragColor = fog;

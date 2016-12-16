@@ -1,61 +1,61 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "vrview.h"
-
-#include <QVBoxLayout>
-#include <QSurfaceFormat>
 #include <QSettings>
-#include <QFileDialog>
-#include <QStandardPaths>
-#include <QOffscreenSurface>
+#include <assert.h>
+#include <QGridLayout>
+#include <iostream>
+#include "databinding.h"
+#include "settings.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    m_ui(new Ui::MainWindow)
 {
-    vr = new VRView(this);
+    QGLFormat qglFormat;
+    qglFormat.setVersion(4,0);
+    qglFormat.setProfile(QGLFormat::CoreProfile);
+    m_ui->setupUi(this);
+    QGridLayout *gridLayout = new QGridLayout(m_ui->centralWidget);
+    m_glWidget = new GLWidget(qglFormat, this);
+    m_glWidget->setMinimumSize(100, 100);
+    gridLayout->addWidget(m_glWidget, 0, 1);
 
-    connect(vr, &VRView::deviceIdentifier, this, &MainWindow::setWindowTitle);
-    connect(vr, &VRView::framesPerSecond, this, &MainWindow::showFramerate);
+    settings.loadSettingsOrDefaults();
+    dataBind();
 
-    ui->setupUi(this);
-    ui->rightLayout->addWidget(vr);
-
-    connect(vr, &VRView::statusMessage, this, &MainWindow::showStatus);
+    // Restore the UI settings
+    QSettings qtSettings("CS123", "Final");
+    restoreGeometry(qtSettings.value("geometry").toByteArray());
+    restoreState(qtSettings.value("windowState").toByteArray());
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
-    delete vr;
-}
-
-void MainWindow::showFramerate(float fps)
-{
-    ui->fpsLabel->setText(tr("%1 FPS").arg(fps));
-}
-
-void MainWindow::showStatus(const QString &message)
-{
-    ui->statusBar->showMessage(message);
-}
-
-void MainWindow::on_action_Load_Panorama_triggered()
-{
-    QSettings settings;
-
-    QFileDialog fileDialog;
-    fileDialog.setFileMode(QFileDialog::ExistingFile);
-    fileDialog.setNameFilter("Images (*.png *.jpg)");
-
-    if (settings.value("Load/PanoramaDir").isValid())
-        fileDialog.setDirectory(settings.value("Load/PanoramaDir").toString());
-    else
-        fileDialog.setDirectory(QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first());
-
-    if (fileDialog.exec())
-    {
-        settings.setValue("Load/PanoramaDir", fileDialog.directory().path());
-        vr->loadPanorama(fileDialog.selectedFiles().first());
+    foreach (DataBinding *b, m_bindings) {
+        delete b;
     }
+    delete m_ui;
+    delete m_glWidget;
+}
+
+void MainWindow::dataBind() {
+//#define BIND(b) { DataBinding *_b = (b); m_bindings.push_back(_b); assert(connect(_b, SIGNAL(dataChanged()), this, SLOT(settingsChanged()))); }
+
+//    BIND(ChoiceBinding::bindRadioButtons(NUM_MODES, settings.mode,
+//                                    m_ui->modeBlur));
+//#undef BIND
+}
+
+void MainWindow::settingsChanged() {
+    m_glWidget->update();
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+    // Save the settings before we quit
+    settings.saveSettings();
+    QSettings qtSettings("CS123", "Final");
+    qtSettings.setValue("geometry", saveGeometry());
+    qtSettings.setValue("windowState", saveState());
+
+    QMainWindow::closeEvent(event);
 }

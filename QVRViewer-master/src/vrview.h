@@ -10,26 +10,7 @@
 #include <QOpenGLDebugMessage>
 #include <QOpenGLDebugLogger>
 #include <QOpenGLTexture>
-#include "extern/openvr/headers/openvr_mingw.hpp"
-
-#include "cs123_lib/resourceloader.h"
-#include "cs123_lib/errorchecker.h"
-
-
-
-//#include "../shapes/Cap.h"
-//#include "../shapes/Cone.h"
-//#include "../shapes/Square.h"
-//#include "../shapes/Cylinder.h"
-//#include "../shapes/Sphere.h"
-
-#include <memory>  // std::unique_ptr
-#include "glm/glm.hpp"            // vec*, mat*, and basic glm functions
-#include "glm/gtx/transform.hpp"  // translate, scale, rotate
-#include "glm/gtc/type_ptr.hpp"   // value_ptr
-#include "shapes/OpenGLShape.h"
-#include "shapes/lsystemtree.h"
-#include "forestmaker.h"
+#include <openvr.h>
 
 
 class VRView : public QOpenGLWidget, protected QOpenGLFunctions_4_1_Core
@@ -70,10 +51,6 @@ protected:
     void keyPressEvent(QKeyEvent *event);
 
 private:
-
-    void draw();
-
-
     void initVR();
 
     void renderEye(vr::Hmd_Eye eye);
@@ -117,7 +94,6 @@ private:
 
     uint32_t m_eyeWidth, m_eyeHeight;
     //FBOHandle *m_leftBuffer, *m_rightBuffer;
-    QOpenGLFramebufferObject *m_defShadingFBO;
     QOpenGLFramebufferObject *m_leftBuffer;
     QOpenGLFramebufferObject *m_rightBuffer;
     QOpenGLFramebufferObject *m_resolveBuffer;
@@ -127,19 +103,6 @@ private:
     VRMode m_mode;
     QString m_imageDirectory;
     QString m_currentImage;
-
-    GLuint m_phongProgram;
-    GLuint m_deferredSecondProgram;
-
-    GLuint m_texID;
-
-    int m_width;
-    int m_height;
-
-    glm::mat4x4 m_view, m_projection;
-
-    std::unique_ptr<OpenGLShape> m_quad;
-    std::unique_ptr<ForestMaker> m_forestMaker;
 
     bool m_inputNext[vr::k_unMaxTrackedDeviceCount];
     bool m_inputPrev[vr::k_unMaxTrackedDeviceCount];

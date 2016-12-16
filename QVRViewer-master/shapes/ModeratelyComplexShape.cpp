@@ -26,11 +26,11 @@ std::vector<float> ModeratelyComplexShape::makeBranch(int recursionDepth, int he
     }
 
     // The smaller the branches get, the less tesselated they are
-    heightTesselation = std::max(1, heightTesselation * 2/3);
-    thetaTesselation = std::max(3, thetaTesselation * 2/3);
+    heightTesselation = glm::max(1, heightTesselation * 2/3);
+    thetaTesselation = glm::max(3, thetaTesselation * 2/3);
 
     // Also, the radius decreases.
-    float newRad = std::max(radius * 0.75, 0.07);
+    float newRad = glm::max(radius * 0.75, 0.07);
 
     // Recursive call to make more branches!
     std::vector<float> branch1 = makeBranch(recursionDepth - 1, heightTesselation, thetaTesselation, newRad, height);

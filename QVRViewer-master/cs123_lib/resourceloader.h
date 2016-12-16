@@ -1,25 +1,16 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-//#include "GL/glew.h"
-#include <QOpenGLFunctions_4_1_Core>
-#include <QOpenGLWidget>
-#include <QOpenGLBuffer>
-#include <QOpenGLVertexArrayObject>
-#include <QOpenGLShaderProgram>
-#include <QOpenGLFramebufferObject>
-#include <QOpenGLDebugMessage>
-#include <QOpenGLDebugLogger>
-#include <QOpenGLTexture>
+#include "GL/glew.h"
 
 class ResourceLoader {
 public:
     ResourceLoader();
-    static GLuint createShaderProgram(const char * vertex_file_path,const char * fragment_file_path, QOpenGLFunctions_4_1_Core *func);
-    //static void initializeGlew();
+    static GLuint createShaderProgram(const char * vertex_file_path,const char * fragment_file_path);
+    static void initializeGlew();
 
 private:
-    static GLuint createShader(GLenum shaderType, const char *filepath, QOpenGLFunctions_4_1_Core *func);
+    static GLuint createShader(GLenum shaderType, const char *filepath);
 };
 
 #endif // SHADER_H

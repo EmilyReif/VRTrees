@@ -8,6 +8,8 @@ QT       += core gui opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+CONFIG += c++14
+
 TARGET = QVRViewer
 TEMPLATE = app
 
@@ -15,6 +17,13 @@ TEMPLATE = app
 SOURCES += src/main.cpp\
     src/mainwindow.cpp \
     src/vrview.cpp \
+    src/databinding.cpp \
+    src/forestmaker.cpp \
+    src/glwidget.cpp \
+    src/settings.cpp \
+    cs123_lib/errorchecker.cpp \
+    cs123_lib/resourceloader.cpp \
+    lsystem/lsystemgenerator.cpp \
     shapes/Cap.cpp \
     shapes/Cone.cpp \
     shapes/Cylinder.cpp \
@@ -24,14 +33,31 @@ SOURCES += src/main.cpp\
     shapes/Sphere.cpp \
     shapes/Square.cpp \
     shapes/Torus.cpp \
-    cs123_lib/errorchecker.cpp \
-    cs123_lib/resourceloader.cpp \
-    lsystem/lsystemgenerator.cpp \
-    src/forestmaker.cpp
+    src/glib/datatype/FBO.cpp \
+    src/glib/datatype/IBO.cpp \
+    src/glib/datatype/VAO.cpp \
+    src/glib/datatype/VBO.cpp \
+    src/glib/datatype/VBOAttribMarker.cpp \
+    src/glib/textures/DepthBuffer.cpp \
+    src/glib/textures/RenderBuffer.cpp \
+    src/glib/textures/Texture.cpp \
+    src/glib/textures/Texture2D.cpp \
+    src/glib/textures/TextureParameters.cpp \
+    src/glib/textures/TextureParametersBuilder.cpp \
+    src/glib/GLDebug.cpp \
+    extern/glew/src/glew.c
 
 HEADERS  += src/mainwindow.h \
     src/modelformats.h \
     src/vrview.h \
+    src/databinding.h \
+    src/forestmaker.h \
+    src/glwidget.h \
+    src/settings.h \
+    cs123_lib/errorchecker.h \
+    cs123_lib/resourceloader.h \
+    cs123_lib/sphere.h \
+    lsystem/lsystemgenerator.h \
     shapes/Cap.h \
     shapes/Cone.h \
     shapes/Cylinder.h \
@@ -41,13 +67,27 @@ HEADERS  += src/mainwindow.h \
     shapes/Sphere.h \
     shapes/Square.h \
     shapes/Torus.h \
-    cs123_lib/errorchecker.h \
-    cs123_lib/resourceloader.h \
-    cs123_lib/sphere.h \
-    lsystem/lsystemgenerator.h \
-    src/forestmaker.h
+    src/glib/datatype/FBO.h \
+    src/glib/datatype/IBO.h \
+    src/glib/datatype/VAO.h \
+    src/glib/datatype/VBO.h \
+    src/glib/datatype/VBOAttribMarker.h \
+    src/glib/shaders/ShaderAttribLocations.h \
+    src/glib/textures/DepthBuffer.h \
+    src/glib/textures/RenderBuffer.h \
+    src/glib/textures/Texture.h \
+    src/glib/textures/Texture2D.h \
+    src/glib/textures/TextureParameters.h \
+    src/glib/textures/TextureParametersBuilder.h \
+    src/glib/GLDebug.h
 
 FORMS    += src/mainwindow.ui
+
+DEFINES +=  _CRT_NO_VA_START_VALIDATION
+DEFINES += GLEW_STATIC
+DEFINES += GLM_SWIZZLE GLM_FORCE_RADIANS
+
+
 
 # from http://stackoverflow.com/a/10058744
 # Copies the given files to the destination directory
@@ -78,17 +118,19 @@ win32 {
     contains(QT_ARCH, i386) {
 message("32 bit build")
         LIBS += -L$$PWD/extern/openvr/lib/win32/ \
-                -lopenvr_api -lopengl32
+                -lopenvr_api -lopengl32 -lglu32
         copyToDestdir($${PWD}/extern/openvr/bin/win32/openvr_api.dll)
     } else {
 message("64 bit build")
         LIBS += -L$$PWD/extern/openvr/lib/win64/ \
-                -lopenvr_api -lopengl32
+                -lopenvr_api -lopengl32 -lglu32
         copyToDestdir($${PWD}/extern/openvr/bin/win64/openvr_api.dll)
     }
 }
 
-INCLUDEPATH += $$PWD/extern/openvr/headers $$PWD/extern/glew/include glm
+INCLUDEPATH += $$PWD/extern/openvr/headers $$PWD/extern/glew/include
+INCLUDEPATH += glm
+DEPENDPATH += glm
 
 
 # from http://stackoverflow.com/a/25193580
@@ -121,12 +163,12 @@ CONFIG( debug, debug|release ) {
 QMAKE_POST_LINK += $${DEPLOY_COMMAND} $${DEPLOY_TARGET} $$escape_expand(\\n\\t)
 
 RESOURCES += \
-    resources.qrc
+    resources.qrc \
+    shaders/shaders.qrc
 
 DISTFILES += \
     win32.rc \
     viewer.ico \
-    glm/CMakeLists.txt \
     shaders/deferredShadingFirst.frag \
     shaders/deferredShadingSecond.frag \
     shaders/deferredShadingFirst.vert \

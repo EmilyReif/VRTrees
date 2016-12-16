@@ -70,7 +70,7 @@ float Square::checkIntersection(glm::vec4 d, glm::vec4 eyeP) {
     float norm = 1.0;
     for (int i = 0; i < 6; i++) {
         norm = ((i%2 == 0) ? 1.0 : -1.0);
-        t = std::min(t, checkIntersectionSide(d, eyeP, i/2, norm));
+        t = glm::min(t, checkIntersectionSide(d, eyeP, i/2, norm));
     }
     return t;
 }

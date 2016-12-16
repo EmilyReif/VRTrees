@@ -2,31 +2,36 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QList>
+#include "glwidget.h"
 
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
 
-class VRView;
+class DataBinding;
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-protected slots:
-    void showFramerate(float fps);
-    void showStatus(const QString &message);
+public slots:
+    // Used internally to keep data bindings and settings in sync.
+    void settingsChanged();
 
-private slots:
-    void on_action_Load_Panorama_triggered();
+protected:
+    // Overridden from QWidget
+    void closeEvent(QCloseEvent *event);
 
 private:
-    Ui::MainWindow *ui;
-    VRView *vr;
+    Ui::MainWindow *m_ui;
+    QList<DataBinding *> m_bindings;
+    GLWidget *m_glWidget;
+
+    void dataBind();
 };
 
 #endif // MAINWINDOW_H

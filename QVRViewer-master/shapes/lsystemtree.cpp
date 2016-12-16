@@ -31,8 +31,8 @@ std::vector<float> LSystemTree::makeBranch(int recursionDepth, int heightTessela
     }
 
     // The smaller the branches get, the less tesselated they are.
-    heightTesselation = std::max(1, heightTesselation * 2/3);
-    thetaTesselation = std::max(5, thetaTesselation * 2/3);
+    heightTesselation = glm::max(1, heightTesselation * 2/3);
+    thetaTesselation = glm::max(5, thetaTesselation * 2/3);
 
     // Recursive call to make more branches!
     lSystemRule rule = m_rulesDict['F'];
@@ -47,7 +47,7 @@ std::vector<float> LSystemTree::makeBranch(int recursionDepth, int heightTessela
                     recursionDepth - 1,
                     heightTesselation,
                     thetaTesselation,
-                    std::max(radius * bInfo.scaleRadius, 0.01f),
+                    glm::max(radius * bInfo.scaleRadius, 0.01f),
                     height * bInfo.scaleHeight,
                     newAngle,
                     rule.translationUp *height* bInfo.translationMultiplier);

@@ -8,10 +8,6 @@
 #include <QApplication>
 #include "modelFormats.h"
 
-#include "../shapes/lsystemtree.h"
-#include "../shapes/OpenGLShape.h"
-#include "../shapes/Square.h"
-
 #define NEAR_CLIP 0.1f
 #define FAR_CLIP 10000.0f
 
@@ -144,180 +140,88 @@ void VRView::initializeGL()
     glEnable(GL_TEXTURE_2D);
 
     // compile our shader
-    //compileShader(m_shader, ":/shaders/deferredShadingFirst.vert", ":/shaders/deferredShadingFirst.frag");
-    //compileShader(m_deferredSecondProgram, ":/shaders/quad.vert", ":/shaders/deferredShadingSecond.frag");
-
-    m_phongProgram = ResourceLoader::createShaderProgram(
-                ":/shaders/deferredShadingFirst.vert", ":/shaders/deferredShadingFirst.frag", this);
-    m_deferredSecondProgram = ResourceLoader::createShaderProgram(
-                ":/shaders/quad.vert", ":/shaders/deferredShadingSecond.frag", this);
-
-    m_quad = std::make_unique<Square>();
-    m_forestMaker = std::make_unique<ForestMaker>();
-
-    QImage image(":/images/bark_tex3.jpg");
-    glGenTextures(1, &m_texID);
-    glBindTexture(GL_TEXTURE_2D, m_texID);
-    glTexImage2D(
-         GL_TEXTURE_2D,
-         0,
-         GL_RGBA,
-         image.width(),
-         image.height(),
-         0,
-         GL_RGBA,
-         GL_UNSIGNED_BYTE,
-         image.bits());
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    compileShader(m_shader, ":/shaders/unlit.vert", ":/shaders/unlit.frag");
 
     // build out sample geometry
-//    m_vao.create();
-//    m_vao.bind();
+    m_vao.create();
+    m_vao.bind();
 
-//    QVector<GLfloat> points = readObj(":/models/sphere.obj");
-//    m_vertCount = points.length();
-//    qDebug() << "loaded" << m_vertCount << "verts";
+    QVector<GLfloat> points = readObj(":/models/sphere.obj");
+    m_vertCount = points.length();
+    qDebug() << "loaded" << m_vertCount << "verts";
 
-//    m_vertexBuffer.create();
-//    m_vertexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
-//    m_vertexBuffer.bind();
+    m_vertexBuffer.create();
+    m_vertexBuffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
+    m_vertexBuffer.bind();
 
-//    m_vertexBuffer.allocate(points.data(), points.length() * sizeof(GLfloat));
+    m_vertexBuffer.allocate(points.data(), points.length() * sizeof(GLfloat));
 
-//    m_shader.bind();
+    m_shader.bind();
 
-//    m_shader.setAttributeBuffer("vertex", GL_FLOAT, 0, 3, 5 * sizeof(GLfloat));
-//    m_shader.enableAttributeArray("vertex");
+    m_shader.setAttributeBuffer("vertex", GL_FLOAT, 0, 3, 5 * sizeof(GLfloat));
+    m_shader.enableAttributeArray("vertex");
 
-//    m_shader.setAttributeBuffer("texCoord", GL_FLOAT, 3 * sizeof(GLfloat), 2, 5 * sizeof(GLfloat));
-//    m_shader.enableAttributeArray("texCoord");
+    m_shader.setAttributeBuffer("texCoord", GL_FLOAT, 3 * sizeof(GLfloat), 2, 5 * sizeof(GLfloat));
+    m_shader.enableAttributeArray("texCoord");
 
-//    m_shader.setUniformValue("diffuse", 0);
+    m_shader.setUniformValue("diffuse", 0);
 
-//    m_texture = new QOpenGLTexture(QImage(":/images/bark_tex3.jpg"));
+    m_texture = new QOpenGLTexture(QImage(":/textures/uvmap.png"));
 
-//    initVR();
+    initVR();
 }
 
 void VRView::paintGL()
 { 
-    glClear(GL_COLOR_BUFFER_BIT);
-    draw();
-
-//    if (m_hmd)
-//    {
-//        updatePoses();
-//        updateInput();
-
-//        glClearColor(0.15f, 0.15f, 0.18f, 1.0f);
-//        glViewport(0, 0, m_eyeWidth, m_eyeHeight);
-
-//        QRect sourceRect(0, 0, m_eyeWidth, m_eyeHeight);
-
-//        glEnable(GL_MULTISAMPLE);
-//        m_leftBuffer->bind();
-//        renderEye(vr::Eye_Left);
-//        m_leftBuffer->release();
-
-//        QRect targetLeft(0, 0, m_eyeWidth, m_eyeHeight);
-//        QOpenGLFramebufferObject::blitFramebuffer(m_resolveBuffer, targetLeft,
-//                                                  m_leftBuffer, sourceRect);
-
-//        glEnable(GL_MULTISAMPLE);
-//        m_rightBuffer->bind();
-//        renderEye(vr::Eye_Right);
-//        m_rightBuffer->release();
-//        QRect targetRight(m_eyeWidth, 0, m_eyeWidth, m_eyeHeight);
-//        QOpenGLFramebufferObject::blitFramebuffer(m_resolveBuffer, targetRight,
-//                                                  m_rightBuffer, sourceRect);
-//    }
-
-//    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-//    glViewport(0, 0, width(), height());
-//    glDisable(GL_MULTISAMPLE);
-//    renderEye(vr::Eye_Right);
-
-//    if (m_hmd)
-//    {
-//        vr::VRTextureBounds_t leftRect = { 0.0f, 0.0f, 0.5f, 1.0f };
-//        vr::VRTextureBounds_t rightRect = { 0.5f, 0.0f, 1.0f, 1.0f };
-//        vr::Texture_t composite = { (void*)m_resolveBuffer->texture(), vr::API_OpenGL, vr::ColorSpace_Gamma };
-
-//        vr::VRCompositor()->Submit(vr::Eye_Left, &composite, &leftRect);
-//        vr::VRCompositor()->Submit(vr::Eye_Right, &composite, &rightRect);
-//    }
-
-//    //vr::VRCompositor()->PostPresentHandoff();
-
-//    m_frames++;
-
-//    update();
-}
-
-void VRView::draw() {
-    glUseProgram(m_phongProgram);
-    m_defShadingFBO->bind();
-    glViewport(0, 0, m_width, m_height);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_texID);
-
-    glm::mat4x4 loc = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
-
-    glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "view"),  1, GL_FALSE, glm::value_ptr(m_view));
-    glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "projection"),  1, GL_FALSE, glm::value_ptr(m_projection));
-    glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, glm::value_ptr(loc));
-
-    std::vector<tree> trees = m_forestMaker->getTrees();
+    if (m_hmd)
     {
-        int numTrees = trees.size();
-        for (int i = 0; i < numTrees; i++) {
-//            loc = trees[i].modelMatrix;
-            float x = i - numTrees/2.f;
-            loc = glm::translate(glm::vec3(x, 0.0, 0));
-            glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, glm::value_ptr(loc));
-            trees[i].treeShape->draw();
-        }
+        updatePoses();
+        updateInput();
 
-//        int numTrees = trees.size();
-//        for (int i = 0; i < numTrees; i++) {
-//            for (int j = 0; j < numTrees; j++) {
-////            loc = trees[i].modelMatrix;
-//                float x = i - numTrees/2.f;
-//                float z = j - numTrees/2.f;
-//                loc = translate(vec3(x, 0.0, z));
-//                glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, value_ptr(loc));
-//                trees[i].treeShape->draw();
-//            }
-//        }
+        glClearColor(0.15f, 0.15f, 0.18f, 1.0f);
+        glViewport(0, 0, m_eyeWidth, m_eyeHeight);
 
+        QRect sourceRect(0, 0, m_eyeWidth, m_eyeHeight);
+
+        glEnable(GL_MULTISAMPLE);
+        m_leftBuffer->bind();
+        renderEye(vr::Eye_Left);
+        m_leftBuffer->release();
+
+        QRect targetLeft(0, 0, m_eyeWidth, m_eyeHeight);
+        QOpenGLFramebufferObject::blitFramebuffer(m_resolveBuffer, targetLeft,
+                                                  m_leftBuffer, sourceRect);
+
+        glEnable(GL_MULTISAMPLE);
+        m_rightBuffer->bind();
+        renderEye(vr::Eye_Right);
+        m_rightBuffer->release();
+        QRect targetRight(m_eyeWidth, 0, m_eyeWidth, m_eyeHeight);
+        QOpenGLFramebufferObject::blitFramebuffer(m_resolveBuffer, targetRight,
+                                                  m_rightBuffer, sourceRect);
     }
 
-    m_defShadingFBO->release();
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glViewport(0, 0, width(), height());
+    glDisable(GL_MULTISAMPLE);
+    renderEye(vr::Eye_Right);
 
-    glUseProgram(m_deferredSecondProgram);
-    glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "NormalAndDiffuse"), 0);
-    glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "PosAndSpec"), 1);
-    glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "Color"), 2);
+    if (m_hmd)
+    {
+        vr::VRTextureBounds_t leftRect = { 0.0f, 0.0f, 0.5f, 1.0f };
+        vr::VRTextureBounds_t rightRect = { 0.5f, 0.0f, 1.0f, 1.0f };
+        vr::Texture_t composite = { (void*)m_resolveBuffer->texture(), vr::API_OpenGL, vr::ColorSpace_Gamma };
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glActiveTexture(GL_TEXTURE0);
-    m_defShadingFBO->takeTexture(0);
-    m_defShadingFBO->bind();
-    glActiveTexture(GL_TEXTURE1);
-    m_defShadingFBO->takeTexture(1);
-    m_defShadingFBO->bind();
-    glActiveTexture(GL_TEXTURE2);
-    m_defShadingFBO->takeTexture(2);
-    m_defShadingFBO->bind();
+        vr::VRCompositor()->Submit(vr::Eye_Left, &composite, &leftRect);
+        vr::VRCompositor()->Submit(vr::Eye_Right, &composite, &rightRect);
+    }
 
-    glUniformMatrix4fv(glGetUniformLocation(m_deferredSecondProgram, "view"),  1, GL_FALSE, glm::value_ptr(m_view));
-    m_quad->draw();
-    glUseProgram(0);
+    //vr::VRCompositor()->PostPresentHandoff();
+
+    m_frames++;
+
+    update();
 }
-
 
 void VRView::renderEye(vr::Hmd_Eye eye)
 {
@@ -336,15 +240,6 @@ void VRView::renderEye(vr::Hmd_Eye eye)
 
 void VRView::resizeGL(int, int)
 {
-    QOpenGLFramebufferObjectFormat buffFormat;
-    buffFormat.setAttachment(QOpenGLFramebufferObject::Depth);
-    buffFormat.setAttachment(QOpenGLFramebufferObject::Depth);
-    buffFormat.setAttachment(QOpenGLFramebufferObject::Depth);
-
-    buffFormat.setInternalTextureFormat(GL_RGBA8);
-    buffFormat.setSamples(4);
-
-    m_defShadingFBO = new QOpenGLFramebufferObject(m_eyeWidth, m_eyeHeight, buffFormat);
     // do nothing
 }
 

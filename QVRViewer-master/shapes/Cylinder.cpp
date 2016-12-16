@@ -2,6 +2,7 @@
 //#include "gl/shaders/ShaderAttribLocations.h"
 #include <iostream>
 //#include <tgmath.h>
+#include <cmath>
 #include <glm/vec3.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #define __STDC_LIMIT_MACROS
@@ -39,8 +40,8 @@ float Cylinder::enforceBoundsBody(glm::vec4 eyeP, glm::vec4 d, float t) {
 
 float Cylinder::checkIntersection(glm::vec4 d, glm::vec4 eyeP) {
     float t = checkIntersectionBody(d, eyeP);
-    t = std::min(t, checkIntersectionCap(d, eyeP, -1));
-    t = std::min(t, checkIntersectionCap(d, eyeP, 1));
+    t = glm::min(t, checkIntersectionCap(d, eyeP, -1));
+    t = glm::min(t, checkIntersectionCap(d, eyeP, 1));
     return t;
 }
 
@@ -57,7 +58,7 @@ float Cylinder::checkIntersectionBody(glm::vec4 d, glm::vec4 eyeP) {
         float t1 = (-B - sqrt(discriminant))/(2.0 * A);
         t0 = enforceBoundsBody(eyeP, d, t0);
         t1 = enforceBoundsBody(eyeP, d, t1);
-        return std::min(t0, t1);
+        return glm::min(t0, t1);
     }
 }
 
