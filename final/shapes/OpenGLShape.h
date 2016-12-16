@@ -54,6 +54,9 @@ protected:
     /** Build the VAO given the specified vertex data and atrributes */
     void buildVAO();
 
+    void setTerrainData(GLfloat *data, int size, VBO::GEOMETRY_LAYOUT drawMode, int numVertices);
+
+
 private:
 
     GLfloat *m_data;                            /// vector of floats containing the vertex data.
