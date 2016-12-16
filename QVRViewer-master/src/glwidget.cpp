@@ -19,8 +19,10 @@
 #include "../shapes/lsystemtree.h"
 #include "forestmaker.h"
 
+#include "glm/gtx/string_cast.hpp"
+
 #define NEAR_CLIP 0.1f
-#define FAR_CLIP 10000.0f
+#define FAR_CLIP 100000000.f
 
 using namespace CS123::GL;
 
@@ -195,6 +197,7 @@ void GLWidget::draw() {
 
 void GLWidget::renderEye(vr::Hmd_Eye eye)
 {
+
     glUseProgram(m_phongProgram);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glActiveTexture(GL_TEXTURE0);
@@ -202,8 +205,8 @@ void GLWidget::renderEye(vr::Hmd_Eye eye)
 
         glm::mat4x4 loc = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
 
-        glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "view"),  1, GL_FALSE, glm::value_ptr(m_view));
-        glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "projection"),  1, GL_FALSE, glm::value_ptr(viewProjection(eye)));
+        glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "view"),  1, GL_FALSE, glm::value_ptr(viewProjection(eye)));
+        glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "projection"),  1, GL_FALSE, glm::value_ptr(perspectiveProjection(eye)));
         glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, glm::value_ptr(loc));
 
         std::vector<tree> trees = m_forestMaker->getTrees();
@@ -250,7 +253,7 @@ void GLWidget::rebuildMatrices() {
              glm::rotate(m_angleY, glm::vec3(1.f,0.f,0.f)) *
              glm::rotate(m_angleX, glm::vec3(0.f,1.f,0.f));
 
-    m_projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
+    m_projection = glm::perspective(35.0f, (float)width()/height(), 0.1f, 100000000.f);
     update();
 }
 
@@ -268,8 +271,8 @@ void GLWidget::initVR() {
     m_rightProjection = vrMatrixToQt(m_hmd->GetProjectionMatrix(vr::Eye_Right, NEAR_CLIP, FAR_CLIP, vr::API_OpenGL));
     m_rightPose = vrMatrixToQt(m_hmd->GetEyeToHeadTransform(vr::Eye_Right));
 
-    m_leftProjection = vrMatrixToQt(m_hmd->GetProjectionMatrix(vr::Eye_Right, NEAR_CLIP, FAR_CLIP, vr::API_OpenGL));
-    m_leftPose = vrMatrixToQt(m_hmd->GetEyeToHeadTransform(vr::Eye_Right));
+    m_leftProjection = vrMatrixToQt(m_hmd->GetProjectionMatrix(vr::Eye_Left, NEAR_CLIP, FAR_CLIP, vr::API_OpenGL));
+    m_leftPose = vrMatrixToQt(m_hmd->GetEyeToHeadTransform(vr::Eye_Left));
 
     QString ident;
     ident.append("QVRViewer - ");
@@ -319,7 +322,7 @@ void GLWidget::updatePoses()
 
     if (m_trackedDevicePose[vr::k_unTrackedDeviceIndex_Hmd].bPoseIsValid)
     {
-        m_hmdPose = glm::inverse(m_matrixDevicePose[vr::k_unTrackedDeviceIndex_Hmd]);
+        m_hmdPose = m_matrixDevicePose[vr::k_unTrackedDeviceIndex_Hmd]; //glm::translate(m_matrixDevicePose[vr::k_unTrackedDeviceIndex_Hmd], glm::vec3(0.f, 0.f, -1.7f));
     }
 }
 
@@ -372,12 +375,23 @@ glm::mat4x4 GLWidget::vrMatrixToQt(const vr::HmdMatrix44_t &mat)
 glm::mat4x4 GLWidget::viewProjection(vr::Hmd_Eye eye)
 {
     glm::mat4x4 s;
-    glm::scale(s, glm::vec3(1000.f, 1000.f, 1000.f));
+    //glm::scale(s, glm::vec3(10000.f, 10000.f, 10000.f));
+    //std::cout << glm::to_string(m_hmdPose) << std::endl;
 
     if (eye == vr::Eye_Left)
-        return m_leftProjection * m_leftPose * m_hmdPose * s;
+        return m_hmdPose; // * m_leftPose; //glm::translate(m_leftPose * m_hmdPose * s, glm::vec3(10.f, 10.f, 10.f));
     else
-        return m_rightProjection * m_rightPose * m_hmdPose * s;
+        return  m_hmdPose; // * m_rightPose; //glm::translate(m_rightPose * m_hmdPose * s, glm::vec3(10.f, 10.f, 10.f));
+}
+
+glm::mat4x4 GLWidget::perspectiveProjection(vr::Hmd_Eye eye) {
+    glm::mat4x4 s;
+    //glm::scale(s, glm::vec3(10000.f, 10000.f, 10000.f));
+    std::cout << glm::to_string(m_rightProjection) << std::endl;
+    if (eye == vr::Eye_Left)
+        return glm::mat4x4(1.0);// m_leftProjection;
+    else
+        return glm::mat4x4(1.0);//m_rightProjection;
 }
 
 QString GLWidget::getTrackedDeviceString(vr::TrackedDeviceIndex_t device, vr::TrackedDeviceProperty prop, vr::TrackedPropertyError *error)

@@ -7,7 +7,7 @@ class Texture {
 public:
     Texture();
     virtual ~Texture();
-    Texture(const Texture &that) = delete;
+    //Texture(const Texture &that) = delete;
     Texture& operator=(const Texture &that) = delete;
     Texture(Texture &&that);
     Texture& operator=(Texture &&that);

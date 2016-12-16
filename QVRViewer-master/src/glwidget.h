@@ -77,6 +77,8 @@ private:
 
     glm::mat4x4 viewProjection(vr::Hmd_Eye eye);
 
+    glm::mat4x4 perspectiveProjection(vr::Hmd_Eye eye);
+
     QString getTrackedDeviceString(vr::TrackedDeviceIndex_t device,
                                    vr::TrackedDeviceProperty prop,
                                    vr::TrackedPropertyError *error = 0);
