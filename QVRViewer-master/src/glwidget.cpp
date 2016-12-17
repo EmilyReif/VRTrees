@@ -44,10 +44,12 @@ GLWidget::GLWidget(QGLFormat format, QWidget *parent)
       m_rightBuffer(0),
       m_frames(0),
       m_currBranch(0),
-      m_branchPercent(0)
+      m_branchPercent(0),
+      m_animateBranches(true),
+      m_drawFog(true)
 
 {
-
+    setFocusPolicy(Qt::StrongFocus);
 }
 
 GLWidget::~GLWidget()
@@ -105,7 +107,12 @@ void GLWidget::draw() {
 
     std::chrono::milliseconds time_span = std::chrono::duration_cast<std::chrono::milliseconds>(currTime - m_startTime);
 
+    if (m_animateBranches) {
     m_currBranch = (int)(time_span.count()/3000.) % 10;
+    if (m_currBranch == 9) {
+        m_animateBranches = false;
+    }
+    }
     m_branchPercent = (time_span.count() % 3000) /3000.f;
 
 
@@ -118,18 +125,23 @@ void GLWidget::draw() {
         QRect sourceRect(0, 0, m_eyeWidth, m_eyeHeight);
 
         glEnable(GL_MULTISAMPLE);
-        renderEye(vr::Eye_Left);
+        renderEye(vr::Eye_Left, false);
 
         QRect targetLeft(0, 0, m_eyeWidth, m_eyeHeight);
         QOpenGLFramebufferObject::blitFramebuffer(m_resolveBuffer, targetLeft,
                                                   m_leftBuffer, sourceRect);
 
         glEnable(GL_MULTISAMPLE);
-        renderEye(vr::Eye_Right);
+        renderEye(vr::Eye_Right, false);
         QRect targetRight(m_eyeWidth, 0, m_eyeWidth, m_eyeHeight);
         QOpenGLFramebufferObject::blitFramebuffer(m_resolveBuffer, targetRight,
                                                   m_rightBuffer, sourceRect);
     }
+
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glViewport(0, 0, width(), height());
+    glDisable(GL_MULTISAMPLE);
+    renderEye(vr::Eye_Right, true);
 
     if (m_hmd)
     {
@@ -146,7 +158,7 @@ void GLWidget::draw() {
 
 }
 
-void GLWidget::renderEye(vr::Hmd_Eye eye)
+void GLWidget::renderEye(vr::Hmd_Eye eye, bool screen)
 {
 
     glUseProgram(m_phongProgram);
@@ -180,16 +192,19 @@ void GLWidget::renderEye(vr::Hmd_Eye eye)
     m_defShadingFBO->unbind();
 
     // Bind the VR buffer
-    if (eye == vr::Eye_Left) {
-        m_leftBuffer->bind();
-    } else {
-        m_rightBuffer->bind();
+    if (!screen) {
+        if (eye == vr::Eye_Left) {
+            m_leftBuffer->bind();
+        } else {
+            m_rightBuffer->bind();
+        }
     }
 
     glUseProgram(m_deferredSecondProgram);
     glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "NormalAndDiffuse"), 0);
     glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "PosAndSpec"), 1);
     glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "Noise"), 2);
+    glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "DrawFog"), m_drawFog);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glActiveTexture(GL_TEXTURE0);
@@ -204,11 +219,14 @@ void GLWidget::renderEye(vr::Hmd_Eye eye)
     m_quad->draw();
 
     // Finally, unbind everything.
-    if (eye == vr::Eye_Left) {
-        m_leftBuffer->release();
-    } else {
-        m_rightBuffer->release();
+    if (!screen) {
+        if (eye == vr::Eye_Left) {
+            m_leftBuffer->release();
+        } else {
+            m_rightBuffer->release();
+        }
     }
+
     glUseProgram(0);
     glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -240,6 +258,18 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event) {
     m_angleY += 3.f * (event->y() - m_prevMousePos.y()) / (float) m_height;
     m_prevMousePos = event->pos();
     rebuildMatrices();
+}
+
+void GLWidget::keyPressEvent(QKeyEvent *event) {
+    switch (event->key()) {
+    case Qt::Key_F:
+        m_drawFog = !m_drawFog;
+        break;
+    case Qt::Key_T:
+        m_animateBranches = !m_animateBranches;
+        break;
+    }
+
 }
 
 void GLWidget::wheelEvent(QWheelEvent *event) {

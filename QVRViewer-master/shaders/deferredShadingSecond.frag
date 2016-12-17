@@ -26,6 +26,7 @@ const float lightIntensity = 0.8;
 uniform sampler2D NormalAndDiffuse;
 uniform sampler2D PosAndSpec;
 uniform sampler2D Noise;
+uniform bool DrawFog;
 
 out vec4 fragColor;
 
@@ -106,8 +107,10 @@ void main(){
 
         // Add fog.
 //        float fogMix = clamp(pow(max((length(pos - camPos) - 3), 0) * fog.w, 0.5) - .6 + fogTexture, 0, 1);
-        float fogMix = clamp(pow(max((length(pos - camPos)), 0) * fog.w, 1) - .6 + fogTexture, 0, 1);
-        fragColor = mix(fragColor, fog, fogMix);
+        if (DrawFog) {
+            float fogMix = clamp(pow(max((length(pos - camPos)), 0) * fog.w, 1) - .6 + fogTexture, 0, 1);
+            fragColor = mix(fragColor, fog, fogMix);
+        }
 
         // Add sun.
         float sunPow = clamp(pow(length(newUV - sunPos), 0.2) * 1.3, 0, 1);
@@ -115,7 +118,11 @@ void main(){
 
 //        fragColor = vec4(fogMix);
     } else {
-        fragColor = fog;
+        if (DrawFog) {
+            fragColor = fog;
+        } else {
+            fragColor = vec4(0.0, 0.0, 0.0, 0.0);
+        }
         float sunPow = clamp(pow(length(newUV - sunPos) - 0.015, 0.2) * 1.3 + fogTexture/7, 0, 1);
         fragColor = mix(sunColor, fragColor, sunPow);
     }

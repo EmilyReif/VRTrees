@@ -55,11 +55,12 @@ protected:
     void mousePressEvent(QMouseEvent *e);
     void mouseMoveEvent(QMouseEvent *e);
     void wheelEvent(QWheelEvent *e);
+    void keyPressEvent(QKeyEvent *e);
 
 private:
     void initVR();
 
-    void renderEye(vr::Hmd_Eye eye);
+    void renderEye(vr::Hmd_Eye eye, bool screen);
 
     void updatePoses();
 
@@ -137,6 +138,10 @@ private:
 
     float m_currBranch;
     float m_branchPercent;
+
+    bool m_animateBranches;
+
+    bool m_drawFog;
 
     // For time things.
     std::chrono::steady_clock::time_point m_startTime;
