@@ -4,5 +4,6 @@
         <file>shaders/unlit.vert</file>
         <file>textures/uvmap.png</file>
         <file>models/sphere.obj</file>
+        <file>images/noiseSmall.png</file>
     </qresource>
 </RCC>

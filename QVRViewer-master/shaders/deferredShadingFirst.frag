@@ -7,12 +7,9 @@ in float currentBranchIndex;
 in float branchPercent;
 in vec2 texc;
 
+uniform float colorID;
 layout(location = 0) out vec4 NormalAndDiffuse;
 layout(location = 1) out vec4 PosAndSpec;
-uniform float colorID;
-
-
-
 
 void main(){
     if ((currentBranchIndex < branchIndex) ||

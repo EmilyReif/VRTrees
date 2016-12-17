@@ -3,8 +3,6 @@
 in vec2 uv;
 uniform mat4 view, projection;
 
-
-
 // Attenuation Properties.
 const float attQuadratic = 0.0;
 const float attLinear = 0.0;
@@ -15,15 +13,14 @@ const vec3 color = vec3(1.0, 1.0, 1.0);
 const float ambientIntensity = 0.2;
 const float shininess = 100;
 const vec3 ambColor = vec3(1, 1, 1);
-//const vec3 diffuseColor = vec3(0.4, 1.0, 1.0);
 const vec3 specColor = vec3(1.0, 1.0, 1.0);
 
 // General scene properties (last val is dropoff).
 // Also some light properties.
 const vec4 fog =  vec4(0.4, 0.4, 0.5, 1.0);
-const vec4 sunPosWorld = vec4(-5, 0.4, -5, 1);
+const vec4 sunPosWorld = vec4(-100, 0.4, -100, 1);
 const vec4 sunColor = vec4(1.0, 0.9, 0.7, 0.0);
-const float lightIntensity = 1.0;
+const float lightIntensity = 0.8;
 
 
 uniform sampler2D NormalAndDiffuse;
@@ -58,7 +55,7 @@ void main(){
     // Calculate sun info
     vec4 sunPosScreen = projection * view * sunPosWorld;
     sunPosScreen /= sunPosScreen.w;
-    vec2 sunPos = (sunPosScreen.xy + 1)/ 2.0;
+    vec2 sunPos = (vec2(sunPosScreen.x + 1, 1.2 + sunPosScreen.y))/ 2.0;
     if (sunPosScreen.z > 1) {
         sunPos = vec2(100, 100);
     }
@@ -85,7 +82,7 @@ void main(){
 //    vec4 spec = specComponent* vec4(specColor, 1.0);
 
     // Overall fog texture depends on screen position.
-    float fogTexture = texture(Noise, vec2(uv.x*0.5, uv.y)).y/2.0;
+    float fogTexture = texture(Noise, vec2(uv.x*0.25, uv.y*0.5)).y/2.0;
 
     // If we are on the tree, add ambient.
     if (diffuseID > 0) {
@@ -108,13 +105,15 @@ void main(){
 //        fragColor += snow;
 
         // Add fog.
-        float fogMix = clamp(pow(max((length(pos - camPos) - 3), 0) * fog.w, 0.7) - .6 + fogTexture, 0, 1);
+//        float fogMix = clamp(pow(max((length(pos - camPos) - 3), 0) * fog.w, 0.5) - .6 + fogTexture, 0, 1);
+        float fogMix = clamp(pow(max((length(pos - camPos)), 0) * fog.w, 1) - .6 + fogTexture, 0, 1);
         fragColor = mix(fragColor, fog, fogMix);
 
         // Add sun.
         float sunPow = clamp(pow(length(newUV - sunPos), 0.2) * 1.3, 0, 1);
         fragColor = mix(sunColor, fragColor, sunPow);
 
+//        fragColor = vec4(fogMix);
     } else {
         fragColor = fog;
         float sunPow = clamp(pow(length(newUV - sunPos) - 0.015, 0.2) * 1.3 + fogTexture/7, 0, 1);

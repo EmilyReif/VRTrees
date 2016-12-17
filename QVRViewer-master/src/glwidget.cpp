@@ -59,7 +59,7 @@ void GLWidget::initializeGL() {
     glEnable(GL_DEPTH_TEST);
 
     // Set the color to set the screen when the color buffer is cleared.
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     // Create shader programs.
     m_phongProgram = ResourceLoader::createShaderProgram(
@@ -70,10 +70,8 @@ void GLWidget::initializeGL() {
     m_quad = std::make_unique<Square>();
     m_forestMaker = std::make_unique<ForestMaker>();
 
-
-
     // Initialize textures.
-    QImage image(":/images/bark_tex3.jpg");
+    QImage image(":/images/noiseSmall.png");
     glGenTextures(1, &m_texID);
     glBindTexture(GL_TEXTURE_2D, m_texID);
     glTexImage2D(
@@ -88,6 +86,9 @@ void GLWidget::initializeGL() {
          image.bits());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glBindTexture(GL_TEXTURE_2D, 0);
     initVR();
     m_startTime = std::chrono::steady_clock::now();
 }
@@ -98,69 +99,13 @@ void GLWidget::paintGL() {
 }
 
 void GLWidget::draw() {
-//    glUseProgram(m_phongProgram);
-//    m_defShadingFBO->bind();
-//    glViewport(0, 0, m_width, m_height);
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//    glActiveTexture(GL_TEXTURE0);
-//    glBindTexture(GL_TEXTURE_2D, m_texID);
 
-//    glm::mat4x4 loc = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
-
-//    glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "view"),  1, GL_FALSE, glm::value_ptr(m_view));
-//    glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "projection"),  1, GL_FALSE, glm::value_ptr(m_projection));
-//    glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, glm::value_ptr(loc));
-
-//    std::vector<tree> trees = m_forestMaker->getTrees();
-//    {
-//        int numTrees = trees.size();
-//        for (int i = 0; i < numTrees; i++) {
-////            loc = trees[i].modelMatrix;
-//            float x = i - numTrees/2.f;
-//            loc = glm::translate(glm::vec3(x, 0.0, 0));
-//            glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, glm::value_ptr(loc));
-//            trees[i].treeShape->draw();
-//        }
-
-////        int numTrees = trees.size();
-////        for (int i = 0; i < numTrees; i++) {
-////            for (int j = 0; j < numTrees; j++) {
-//////            loc = trees[i].modelMatrix;
-////                float x = i - numTrees/2.f;
-////                float z = j - numTrees/2.f;
-////                loc = translate(vec3(x, 0.0, z));
-////                glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, value_ptr(loc));
-////                trees[i].treeShape->draw();
-////            }
-////        }
-
-//    }
-
-//    m_defShadingFBO->unbind();
-//    glBindTexture(GL_TEXTURE_2D, 0);
-
-//    glUseProgram(m_deferredSecondProgram);
-//    glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "NormalAndDiffuse"), 0);
-//    glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "PosAndSpec"), 1);
-//    glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "Color"), 2);
-
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//    glActiveTexture(GL_TEXTURE0);
-//    m_defShadingFBO->getColorAttachment(0).bind();
-//    glActiveTexture(GL_TEXTURE1);
-//    m_defShadingFBO->getColorAttachment(1).bind();
-//    glActiveTexture(GL_TEXTURE2);
-//    m_defShadingFBO->getColorAttachment(2).bind();
-
-//    glUniformMatrix4fv(glGetUniformLocation(m_deferredSecondProgram, "view"),  1, GL_FALSE, glm::value_ptr(m_view));
-//    m_quad->draw();
-//    glUseProgram(0);
 
     std::chrono::steady_clock::time_point currTime = std::chrono::steady_clock::now();
 
     std::chrono::milliseconds time_span = std::chrono::duration_cast<std::chrono::milliseconds>(currTime - m_startTime);
 
-    m_currBranch = std::min(10., glm::floor(time_span.count()/3000.));
+    m_currBranch = (int)(time_span.count()/3000.) % 10;
     m_branchPercent = (time_span.count() % 3000) /3000.f;
 
 
@@ -173,32 +118,23 @@ void GLWidget::draw() {
         QRect sourceRect(0, 0, m_eyeWidth, m_eyeHeight);
 
         glEnable(GL_MULTISAMPLE);
-        m_leftBuffer->bind();
         renderEye(vr::Eye_Left);
-        m_leftBuffer->release();
 
         QRect targetLeft(0, 0, m_eyeWidth, m_eyeHeight);
         QOpenGLFramebufferObject::blitFramebuffer(m_resolveBuffer, targetLeft,
                                                   m_leftBuffer, sourceRect);
 
         glEnable(GL_MULTISAMPLE);
-        m_rightBuffer->bind();
         renderEye(vr::Eye_Right);
-        m_rightBuffer->release();
         QRect targetRight(m_eyeWidth, 0, m_eyeWidth, m_eyeHeight);
         QOpenGLFramebufferObject::blitFramebuffer(m_resolveBuffer, targetRight,
                                                   m_rightBuffer, sourceRect);
-
     }
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glViewport(0, 0, width(), height());
-    glDisable(GL_MULTISAMPLE);
-    renderEye(vr::Eye_Right);
 
     if (m_hmd)
     {
-        vr::VRTextureBounds_t leftRect = { 0.0f, 0.0f, 0.5f, 1.0f };
-        vr::VRTextureBounds_t rightRect = { 0.5f, 0.0f, 1.0f, 1.0f };
+        vr::VRTextureBounds_t leftRect = { 0.0f, 0.5f, 0.5f, 1.0f };
+        vr::VRTextureBounds_t rightRect = { 0.5f, 0.5f, 1.0f, 1.0f };
         vr::Texture_t composite = { (void*)m_resolveBuffer->texture(), vr::TextureType_OpenGL, vr::ColorSpace_Gamma };
 
         vr::VRCompositor()->Submit(vr::Eye_Left, &composite, &leftRect);
@@ -214,33 +150,67 @@ void GLWidget::renderEye(vr::Hmd_Eye eye)
 {
 
     glUseProgram(m_phongProgram);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, m_texID);
+    m_defShadingFBO->bind();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glActiveTexture(GL_TEXTURE0);
 
-        glm::mat4x4 loc = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
+    glm::mat4x4 loc = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
 
-        glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "view"),  1, GL_FALSE, glm::value_ptr(glm::transpose(viewProjection(eye))));
-        glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "projection"),  1, GL_FALSE, glm::value_ptr(glm::transpose(perspectiveProjection(eye))));
-        glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, glm::value_ptr(loc));
-        glUniform1f(glGetUniformLocation(m_phongProgram, "currentBranch"), m_currBranch);
-        glUniform1f(glGetUniformLocation(m_phongProgram, "percent"), m_branchPercent);
+    glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "view"),  1, GL_FALSE, glm::value_ptr(viewProjection(eye)));
+    glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "projection"),  1, GL_FALSE, glm::value_ptr(glm::transpose(perspectiveProjection(eye))));
+    glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, glm::value_ptr(loc));
+    glUniform1f(glGetUniformLocation(m_phongProgram, "currentBranch"), m_currBranch);
+    glUniform1f(glGetUniformLocation(m_phongProgram, "percent"), m_branchPercent);
 
-        std::vector<tree> trees = m_forestMaker->getTrees();
-        {
-            int numTrees = trees.size();
-            for (int i = 0; i < numTrees; i++) {
-                loc = trees[i].modelMatrix;
-                glUniform1f(glGetUniformLocation(m_phongProgram, "colorID"),  trees[i].colorID);
-                glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, glm::value_ptr(loc));
-                trees[i].treeShape->draw();
-            }
-            loc = glm::mat4x4();
-            loc = glm::scale(loc, glm::vec3(1, 0.5, 1));
-            glUniform1f(glGetUniformLocation(m_phongProgram, "colorID"),  1);
+    std::vector<tree> trees = m_forestMaker->getTrees();
+    {
+        int numTrees = trees.size();
+        for (int i = 0; i < numTrees; i++) {
+            loc = trees[i].modelMatrix;
+            glUniform1f(glGetUniformLocation(m_phongProgram, "colorID"),  trees[i].colorID);
             glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, glm::value_ptr(loc));
-            m_forestMaker->drawTerrain();
+            trees[i].treeShape->draw();
         }
+        loc = glm::mat4x4();
+        loc = glm::scale(loc, glm::vec3(1, 0.5, 1));
+        glUniform1f(glGetUniformLocation(m_phongProgram, "colorID"),  1);
+        glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, glm::value_ptr(loc));
+        m_forestMaker->drawTerrain();
+    }
+    m_defShadingFBO->unbind();
+
+    // Bind the VR buffer
+    if (eye == vr::Eye_Left) {
+        m_leftBuffer->bind();
+    } else {
+        m_rightBuffer->bind();
+    }
+
+    glUseProgram(m_deferredSecondProgram);
+    glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "NormalAndDiffuse"), 0);
+    glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "PosAndSpec"), 1);
+    glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "Noise"), 2);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glActiveTexture(GL_TEXTURE0);
+    m_defShadingFBO->getColorAttachment(0).bind();
+    glActiveTexture(GL_TEXTURE1);
+    m_defShadingFBO->getColorAttachment(1).bind();
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, m_texID);
+
+    glUniformMatrix4fv(glGetUniformLocation(m_deferredSecondProgram, "view"),  1, GL_FALSE, glm::value_ptr(viewProjection(eye)));
+    glUniformMatrix4fv(glGetUniformLocation(m_deferredSecondProgram, "projection"),  1, GL_FALSE, glm::value_ptr(glm::transpose(perspectiveProjection(eye))));
+    m_quad->draw();
+
+    // Finally, unbind everything.
+    if (eye == vr::Eye_Left) {
+        m_leftBuffer->release();
+    } else {
+        m_rightBuffer->release();
+    }
+    glUseProgram(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 // This is called at the beginning of the program between initializeGL and
@@ -250,7 +220,13 @@ void GLWidget::resizeGL(int w, int h) {
     m_height = h;
 
     // TODO: [Task 5] Initialize FBOs here, with dimensions m_width and m_height.
-    m_defShadingFBO = std::make_unique<FBO>(3, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height, TextureParameters::WRAP_METHOD::REPEAT, TextureParameters::FILTER_METHOD::LINEAR);
+    m_defShadingFBO = std::make_unique<FBO>(
+                2,
+                FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY,
+                m_width, m_height,
+                TextureParameters::WRAP_METHOD::REPEAT,
+                TextureParameters::FILTER_METHOD::LINEAR,
+                GL_FLOAT);
     rebuildMatrices();
 }
 
@@ -260,8 +236,8 @@ void GLWidget::mousePressEvent(QMouseEvent *event) {
 }
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event) {
-    m_angleX += 3.f * (event->x() - m_prevMousePos.x()) / (float) width();
-    m_angleY += 3.f * (event->y() - m_prevMousePos.y()) / (float) height();
+    m_angleX += 3.f * (event->x() - m_prevMousePos.x()) / (float) m_width;
+    m_angleY += 3.f * (event->y() - m_prevMousePos.y()) / (float) m_height;
     m_prevMousePos = event->pos();
     rebuildMatrices();
 }
@@ -276,7 +252,7 @@ void GLWidget::rebuildMatrices() {
              glm::rotate(m_angleY, glm::vec3(1.f,0.f,0.f)) *
              glm::rotate(m_angleX, glm::vec3(0.f,1.f,0.f));
 
-    m_projection = glm::perspective(35.0f, (float)width()/height(), 0.1f, 100000000.f);
+    m_projection = glm::perspective(35.0f, (float)m_width/m_height, 0.1f, 100000000.f);
     update();
 }
 
@@ -398,19 +374,22 @@ glm::mat4x4 GLWidget::vrMatrixToQt(const vr::HmdMatrix44_t &mat)
 glm::mat4x4 GLWidget::viewProjection(vr::Hmd_Eye eye)
 {
     glm::mat4x4 s;
-    //glm::scale(s, glm::vec3(10000.f, 10000.f, 10000.f));
-    //std::cout << glm::to_string(m_hmdPose) << std::endl;
-
     if (eye == vr::Eye_Left)
-        return m_hmdPose * m_leftPose; //glm::translate(m_leftPose * m_hmdPose * s, glm::vec3(10.f, 10.f, 10.f));
+    {
+        glm::mat4x4 viewProjection = glm::transpose(m_hmdPose * m_leftPose);
+        return glm::translate(viewProjection, glm::vec3(2.f, 1.f, 1.f));
+    }
+        //return m_hmdPose * m_leftPose; //glm::translate(m_leftPose * m_hmdPose * s, glm::vec3(10.f, 10.f, 10.f));
     else
-        return  m_hmdPose * m_rightPose; //glm::translate(m_rightPose * m_hmdPose * s, glm::vec3(10.f, 10.f, 10.f));
+    {
+        glm::mat4x4 viewProjection = glm::transpose(m_hmdPose * m_rightPose);
+        return glm::translate(viewProjection, glm::vec3(2.f, 1.f, 1.f));
+    }
+//        return  m_hmdPose * m_rightPose; //glm::translate(m_rightPose * m_hmdPose * s, glm::vec3(10.f, 10.f, 10.f));
 }
 
 glm::mat4x4 GLWidget::perspectiveProjection(vr::Hmd_Eye eye) {
     glm::mat4x4 s;
-    //glm::scale(s, glm::vec3(10000.f, 10000.f, 10000.f));
-    //std::cout << glm::to_string(m_rightProjection) << std::endl;
     if (eye == vr::Eye_Left)
         return m_leftProjection;
     else

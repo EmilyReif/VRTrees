@@ -56,7 +56,6 @@ void FBO::generateDepthStencilAttachment() {
     switch(m_depthStencilAttachmentType) {
         case DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY:
             m_depthAttachment = std::make_unique<DepthBuffer>(m_width, m_height);
-            // TODO [Task 8]
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthAttachment->id());
             break;
         case DEPTH_STENCIL_ATTACHMENT::DEPTH_STENCIL:
