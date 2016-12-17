@@ -33,9 +33,9 @@ GLWidget::GLWidget(QGLFormat format, QWidget *parent)
       m_forestMaker(nullptr),
       m_defShadingFBO(nullptr),
       m_angleX(-0.5f), m_angleY(0.f), m_zoom(1.5f),
-      m_texNoiseID(0)
+      m_texNoiseID(0),
+      m_startTime(std::chrono::steady_clock::now())
 {
-    startTime = std::chrono::steady_clock::now();
 }
 
 GLWidget::~GLWidget()
@@ -89,10 +89,10 @@ void GLWidget::paintGL() {
 void GLWidget::draw() {
     std::chrono::steady_clock::time_point currTime = std::chrono::steady_clock::now();
 
-    std::chrono::milliseconds time_span = std::chrono::duration_cast<std::chrono::milliseconds>(currTime - startTime);
+    std::chrono::milliseconds time_span = std::chrono::duration_cast<std::chrono::milliseconds>(currTime - m_startTime);
+
     float currBranch = std::min(10., glm::floor(time_span.count()/3000.));
-    float branchPercent = (std::chrono::duration_cast<std::chrono::milliseconds>(
-                std::chrono::steady_clock::now().time_since_epoch()).count() % 3000) /3000.f;
+    float branchPercent = (time_span.count() % 3000) /3000.f;
 
     glUseProgram(m_phongProgram);
     m_defShadingFBO->bind();
@@ -106,10 +106,8 @@ void GLWidget::draw() {
     glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, value_ptr(loc));
 
     glActiveTexture(GL_TEXTURE0);
-//    glBindTexture(GL_TEXTURE_2D, m_texID);
-
     glUniform1f(glGetUniformLocation(m_phongProgram, "currentBranch"), currBranch);
-        glUniform1f(glGetUniformLocation(m_phongProgram, "percent"), branchPercent);
+    glUniform1f(glGetUniformLocation(m_phongProgram, "percent"), branchPercent);
     std::vector<tree> trees = m_forestMaker->getTrees();
     {
         int numTrees = trees.size();
