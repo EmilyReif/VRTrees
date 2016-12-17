@@ -21,7 +21,7 @@ const vec3 specColor = vec3(1.0, 1.0, 1.0);
 // General scene properties (last val is dropoff).
 // Also some light properties.
 const vec4 fog =  vec4(0.4, 0.4, 0.5, 1.0);
-const vec4 sunPosWorld = vec4(-5, 0.6, -5, 1);
+const vec4 sunPosWorld = vec4(-5, 1, -5, 1);
 const vec4 sunColor = vec4(1.0, 0.9, 0.7, 0.0);
 const float lightIntensity = 1.0;
 
@@ -78,34 +78,33 @@ void main(){
     float specularIntensity = p.w;
     p = texture(NormalAndDiffuse, uv);
     vec4 norm = vec4(normalize(unpack(p.xyz)), 0.0);
-    float diffuseIntensity = p.w;
+    float diffuseID = p.w;
 
     // Calculate lighting information.
     vec4 L = normalize(sunPosWorld - pos);
 
     // Typical diffuse calculations, nothing to see here (NB: all in worldspace).
-    float diffuseComponent = diffuseIntensity * clamp(dot(norm, L), 0.0, 1.0);
+    float diffuseComponent = clamp(dot(norm, L), 0.0, 1.0);
     vec4 camPos = inverse(view) * vec4(0.0, 0.0, 0.0, 1.0);
     vec4 eye = normalize(pos - camPos);
-    vec4 reflection = normalize(reflect(L, norm));
-    float specComponent = specularIntensity * pow(clamp(dot(eye, reflection), 0.0, 1.0), shininess);
-    fragColor = vec4(1.0)*(specComponent);
+//    vec4 reflection = normalize(reflect(L, norm));
+//    float specComponent = specularIntensity * pow(clamp(dot(eye, reflection), 0.0, 1.0), shininess);
+//    fragColor = vec4(1.0)*(specComponent);
 
     // Add in some light attenuation...
     float d = length(sunPosWorld - pos);
     float attFn = (attConstant + attLinear * d + attQuadratic * d*d);
-    vec4 spec = specComponent* vec4(specColor, 1.0);
-    vec4 amb = vec4(0.0);
+//    vec4 spec = specComponent* vec4(specColor, 1.0);
 
     // Overall fog texture depends on screen position.
     float fogTexture = texture(Noise, vec2(uv.x*0.5, uv.y)).y/2.0;
 
     // If we are on the tree, add ambient.
-    if (diffuseIntensity > 0) {
+    if (diffuseID > 0) {
 
         // Add noise
         vec4 diffValue = vec4(mix(noiseUV(pos.xy), noiseUV(pos.yz), abs(norm.x)))/2 + 0.5;
-        vec4 diff = diffValue * diffuseComponent * min(lightIntensity / attFn, 1) * vec4(0.45, 0.35, 0.26, 1.0);
+        vec4 diff = diffValue * diffuseComponent * min(lightIntensity / attFn, 1) * vec4(0.45 * diffuseID, 0.35, 0.26, 1.0);
 
         vec4 ambient = diffValue/3 * min(lightIntensity / attFn, 1);
         fragColor = sunColor * diff + vec4(ambColor, 1.0) * ambient;

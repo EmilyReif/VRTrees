@@ -11,13 +11,12 @@
 class Terrain {
 public:
     Terrain();
-
     void init();
     void draw();
+    glm::vec3 getPosition(int row, int col);
 
 private:
     float randValue(int row, int col);
-    glm::vec3 getPosition(int row, int col);
     float octave(int row, int col, float frequency, float amplitude);
     glm::vec3 getNormal(int row, int col);
     std::unique_ptr<TerrainShape> m_shape;

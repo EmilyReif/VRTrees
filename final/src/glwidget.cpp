@@ -18,8 +18,10 @@
 #include "../shapes/OpenGLShape.h"
 #include "../shapes/lsystemtree.h"
 #include "forestmaker.h"
+
 #include "terrain/terrain.h"
 #include <chrono>
+
 
 using namespace CS123::GL;
 
@@ -30,7 +32,7 @@ GLWidget::GLWidget(QGLFormat format, QWidget *parent)
       m_quad(nullptr),
       m_forestMaker(nullptr),
       m_defShadingFBO(nullptr),
-      m_angleX(-0.5f), m_angleY(0.5f), m_zoom(4.f),
+      m_angleX(-0.5f), m_angleY(0.f), m_zoom(1.5f),
       m_texNoiseID(0)
 {
     startTime = std::chrono::steady_clock::now();
@@ -55,7 +57,6 @@ void GLWidget::initializeGL() {
 
     m_quad = std::make_unique<Square>();
     m_forestMaker = std::make_unique<ForestMaker>();
-    m_terrain.init();
 
     // Initialize textures.
 
@@ -99,13 +100,11 @@ void GLWidget::draw() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     mat4x4 loc = translate(vec3(0.0f, 0.0f, 0.0f));
-    loc = glm::scale(loc, vec3(1, 0.7, 1));
 
     glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "view"),  1, GL_FALSE, value_ptr(m_view));
     glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "projection"),  1, GL_FALSE, value_ptr(m_projection));
     glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, value_ptr(loc));
 
-    m_terrain.draw();
     glActiveTexture(GL_TEXTURE0);
 //    glBindTexture(GL_TEXTURE_2D, m_texID);
 
@@ -116,9 +115,15 @@ void GLWidget::draw() {
         int numTrees = trees.size();
         for (int i = 0; i < numTrees; i++) {
             loc = trees[i].modelMatrix;
+            glUniform1f(glGetUniformLocation(m_phongProgram, "colorID"),  trees[i].colorID);
             glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, value_ptr(loc));
             trees[i].treeShape->draw();
         }
+        loc = glm::mat4x4();
+        loc = glm::scale(loc, vec3(1, 0.5, 1));
+        glUniform1f(glGetUniformLocation(m_phongProgram, "colorID"),  1);
+        glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, value_ptr(loc));
+        m_forestMaker->drawTerrain();
     }
 
     m_defShadingFBO->unbind();
@@ -180,12 +185,12 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event) {
 }
 
 void GLWidget::wheelEvent(QWheelEvent *event) {
-    m_zoom -= event->delta() / 100.f;
+    m_zoom -= event->delta() / 600.f;
     rebuildMatrices();
 }
 
 void GLWidget::rebuildMatrices() {
-    m_view = translate(vec3(0.f, -1.f, -m_zoom)) *
+    m_view = translate(vec3(0.f, 0.f, -m_zoom)) *
              rotate(m_angleY, vec3(1.f,0.f,0.f)) *
              rotate(m_angleX, vec3(0.f,1.f,0.f));
 
