@@ -49,6 +49,7 @@ void OpenGLShape::sendVertexData(std::vector<float> verts) {
     int dataSizePerVert = 3;
     int dataSizePerVertUV = 2;
     int bytesPerFloat = 4;
+    int dataSizePerBranchDepth = 1;
     setData(verts.data());
     setSize(verts.size());
     setDrawMode(VBO::GEOMETRY_LAYOUT::LAYOUT_TRIANGLE_STRIP);
@@ -66,6 +67,11 @@ void OpenGLShape::sendVertexData(std::vector<float> verts) {
     setAttribute(ShaderAttrib::TEXCOORD0,
                  dataSizePerVertUV,
                  2 * dataSizePerVert * bytesPerFloat,
+                 VBOAttribMarker::DATA_TYPE::FLOAT,
+                 false);
+    setAttribute(ShaderAttrib::TEXCOORD1,
+                 dataSizePerBranchDepth,
+                 (2 * dataSizePerVert * bytesPerFloat) + (dataSizePerVertUV * bytesPerFloat),
                  VBOAttribMarker::DATA_TYPE::FLOAT,
                  false);
     buildVAO();

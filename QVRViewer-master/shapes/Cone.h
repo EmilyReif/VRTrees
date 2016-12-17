@@ -10,7 +10,7 @@ class Cone
 public:
     Cone();
     virtual ~Cone();
-    std::vector<float> createVertsVector(int heightTesselation, int thetaTesselation, float radius, float height);
+    static std::vector<float> createVertsVector(int heightTesselation, int thetaTesselation, float radius, float height, int branchIndex);
     static float checkIntersection(glm::vec4 ray, glm::vec4 eyeP);
     static float checkIntersectionBody(glm::vec4 ray, glm::vec4 eyeP);
     static float checkIntersectionCap(glm::vec4 ray, glm::vec4 eyeP);

@@ -45,7 +45,9 @@ SOURCES += src/main.cpp\
     src/glib/textures/TextureParameters.cpp \
     src/glib/textures/TextureParametersBuilder.cpp \
     src/glib/GLDebug.cpp \
-    extern/glew/src/glew.c
+    extern/glew/src/glew.c \
+    terrain/terrain.cpp \
+    terrain/terrainshape.cpp
 
 HEADERS  += src/mainwindow.h \
     src/modelformats.h \
@@ -79,7 +81,9 @@ HEADERS  += src/mainwindow.h \
     src/glib/textures/Texture2D.h \
     src/glib/textures/TextureParameters.h \
     src/glib/textures/TextureParametersBuilder.h \
-    src/glib/GLDebug.h
+    src/glib/GLDebug.h \
+    terrain/terrain.h \
+    terrain/terrainshape.h
 
 FORMS    += src/mainwindow.ui
 

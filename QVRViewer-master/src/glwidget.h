@@ -28,6 +28,7 @@
 #include <QOpenGLDebugLogger>
 #include <QOpenGLTexture>
 #include <openvr.h>
+#include <chrono>
 
 
 class OpenGLShape;
@@ -131,6 +132,14 @@ private:
     /** For mouse interaction. */
     float m_angleX, m_angleY, m_zoom;
     QPoint m_prevMousePos;
+
+
+
+    float m_currBranch;
+    float m_branchPercent;
+
+    // For time things.
+    std::chrono::steady_clock::time_point m_startTime;
 };
 
 #endif // GLWIDGET_H

@@ -19,6 +19,8 @@
 #include "../shapes/lsystemtree.h"
 #include "forestmaker.h"
 
+#include <chrono>
+
 #include "glm/gtx/string_cast.hpp"
 
 #define NEAR_CLIP 0.1f
@@ -40,7 +42,10 @@ GLWidget::GLWidget(QGLFormat format, QWidget *parent)
       m_eyeHeight(0),
       m_leftBuffer(0),
       m_rightBuffer(0),
-      m_frames(0)
+      m_frames(0),
+      m_currBranch(0),
+      m_branchPercent(0)
+
 {
 
 }
@@ -66,6 +71,7 @@ void GLWidget::initializeGL() {
     m_forestMaker = std::make_unique<ForestMaker>();
 
 
+
     // Initialize textures.
     QImage image(":/images/bark_tex3.jpg");
     glGenTextures(1, &m_texID);
@@ -83,6 +89,7 @@ void GLWidget::initializeGL() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     initVR();
+    m_startTime = std::chrono::steady_clock::now();
 }
 
 void GLWidget::paintGL() {
@@ -149,6 +156,14 @@ void GLWidget::draw() {
 //    m_quad->draw();
 //    glUseProgram(0);
 
+    std::chrono::steady_clock::time_point currTime = std::chrono::steady_clock::now();
+
+    std::chrono::milliseconds time_span = std::chrono::duration_cast<std::chrono::milliseconds>(currTime - m_startTime);
+
+    m_currBranch = std::min(10., glm::floor(time_span.count()/3000.));
+    m_branchPercent = (time_span.count() % 3000) /3000.f;
+
+
     if (m_hmd)
     {
         updatePoses();
@@ -208,15 +223,23 @@ void GLWidget::renderEye(vr::Hmd_Eye eye)
         glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "view"),  1, GL_FALSE, glm::value_ptr(glm::transpose(viewProjection(eye))));
         glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "projection"),  1, GL_FALSE, glm::value_ptr(glm::transpose(perspectiveProjection(eye))));
         glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, glm::value_ptr(loc));
+        glUniform1f(glGetUniformLocation(m_phongProgram, "currentBranch"), m_currBranch);
+        glUniform1f(glGetUniformLocation(m_phongProgram, "percent"), m_branchPercent);
 
         std::vector<tree> trees = m_forestMaker->getTrees();
         {
             int numTrees = trees.size();
             for (int i = 0; i < numTrees; i++) {
                 loc = trees[i].modelMatrix;
+                glUniform1f(glGetUniformLocation(m_phongProgram, "colorID"),  trees[i].colorID);
                 glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, glm::value_ptr(loc));
                 trees[i].treeShape->draw();
             }
+            loc = glm::mat4x4();
+            loc = glm::scale(loc, glm::vec3(1, 0.5, 1));
+            glUniform1f(glGetUniformLocation(m_phongProgram, "colorID"),  1);
+            glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, glm::value_ptr(loc));
+            m_forestMaker->drawTerrain();
         }
 }
 
@@ -387,7 +410,7 @@ glm::mat4x4 GLWidget::viewProjection(vr::Hmd_Eye eye)
 glm::mat4x4 GLWidget::perspectiveProjection(vr::Hmd_Eye eye) {
     glm::mat4x4 s;
     //glm::scale(s, glm::vec3(10000.f, 10000.f, 10000.f));
-    std::cout << glm::to_string(m_rightProjection) << std::endl;
+    //std::cout << glm::to_string(m_rightProjection) << std::endl;
     if (eye == vr::Eye_Left)
         return m_leftProjection;
     else
