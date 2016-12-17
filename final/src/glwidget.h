@@ -18,6 +18,7 @@
 #include "forestmaker.h"
 #include "gl/datatype/FBO.h"
 #include "terrain/terrain.h"
+#include <chrono>
 
 class OpenGLShape;
 
@@ -63,6 +64,9 @@ private:
     /** For mouse interaction. */
     float m_angleX, m_angleY, m_zoom;
     QPoint m_prevMousePos;
+    std::chrono::steady_clock::time_point startTime;
+
+
 };
 
 #endif // GLWIDGET_H

@@ -25,7 +25,7 @@ LSystemTree:: ~LSystemTree()
 std::vector<float> LSystemTree::makeBranch(int recursionDepth, int heightTesselation, int thetaTesselation, float radius, float height, vec3 angle, float translation) {
 
     // Generate the verts for the current branch, and return it if we have exceeded maximum recursion depth.
-    std::vector<float> verts = Cone::createVertsVector(heightTesselation, thetaTesselation, radius, height);
+    std::vector<float> verts = Cone::createVertsVector(heightTesselation, thetaTesselation, radius, height, maxDepth - recursionDepth);
     if (recursionDepth < 1) {
         return verts;
     }
@@ -70,8 +70,8 @@ std::vector<float> LSystemTree::applyTransformToVerts(std::vector<float> &verts,
     mat3 normTransform = inverse(transpose(mat3(transform)));
 
     // Iterate over the verts and apply the transform!
-    for (int i = 0; i < verts.size()/8; i++){
-        int idx = i*8;
+    for (int i = 0; i < verts.size()/9; i++){
+        int idx = i*9;
         vec4 p = vec4(
                     verts[idx + 0],
                     verts[idx + 1],
@@ -95,8 +95,8 @@ std::vector<float> LSystemTree::applyTransformToVerts(std::vector<float> &verts,
         verts[idx + 5] = n1[2];
 
         // UV
-        verts[idx + 6] *= 0.7;
-        verts[idx + 7] *= 0.7;
+//        verts[idx + 6] *= 0.7;
+//        verts[idx + 7]
     }
     return verts;
 }
@@ -107,6 +107,7 @@ void LSystemTree::setVertexData() {
     int thetaTesselation = getParam2()+ 2;
 
     lSystemRule rule = m_rulesDict['F'];
+    maxDepth = rule.maxRecursionLevel + 1;
     std::vector<float> verts = makeBranch(rule.maxRecursionLevel,
                                           heightTesselation,
                                           thetaTesselation,

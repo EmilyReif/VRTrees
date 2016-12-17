@@ -20,7 +20,7 @@ ModeratelyComplexShape:: ~ModeratelyComplexShape()
 
 std::vector<float> ModeratelyComplexShape::makeBranch(int recursionDepth, int heightTesselation, int thetaTesselation, float radius, float height ) {
 
-    std::vector<float> verts = Cone::createVertsVector(heightTesselation, thetaTesselation, radius, height);
+    std::vector<float> verts = Cone::createVertsVector(heightTesselation, thetaTesselation, radius, height, 0);
     if (recursionDepth < 1) {
         return verts;
     }
