@@ -184,7 +184,7 @@ void GLWidget::draw() {
     {
         vr::VRTextureBounds_t leftRect = { 0.0f, 0.0f, 0.5f, 1.0f };
         vr::VRTextureBounds_t rightRect = { 0.5f, 0.0f, 1.0f, 1.0f };
-        vr::Texture_t composite = { (void*)m_resolveBuffer->texture(), vr::API_OpenGL, vr::ColorSpace_Gamma };
+        vr::Texture_t composite = { (void*)m_resolveBuffer->texture(), vr::TextureType_OpenGL, vr::ColorSpace_Gamma };
 
         vr::VRCompositor()->Submit(vr::Eye_Left, &composite, &leftRect);
         vr::VRCompositor()->Submit(vr::Eye_Right, &composite, &rightRect);
@@ -205,8 +205,8 @@ void GLWidget::renderEye(vr::Hmd_Eye eye)
 
         glm::mat4x4 loc = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
 
-        glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "view"),  1, GL_FALSE, glm::value_ptr(viewProjection(eye)));
-        glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "projection"),  1, GL_FALSE, glm::value_ptr(perspectiveProjection(eye)));
+        glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "view"),  1, GL_FALSE, glm::value_ptr(glm::transpose(viewProjection(eye))));
+        glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "projection"),  1, GL_FALSE, glm::value_ptr(glm::transpose(perspectiveProjection(eye))));
         glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, glm::value_ptr(loc));
 
         std::vector<tree> trees = m_forestMaker->getTrees();
@@ -268,11 +268,11 @@ void GLWidget::initVR() {
         return;
     }
 
-    m_rightProjection = vrMatrixToQt(m_hmd->GetProjectionMatrix(vr::Eye_Right, NEAR_CLIP, FAR_CLIP, vr::API_OpenGL));
-    m_rightPose = vrMatrixToQt(m_hmd->GetEyeToHeadTransform(vr::Eye_Right));
+    m_rightProjection = vrMatrixToQt(m_hmd->GetProjectionMatrix(vr::Eye_Right, NEAR_CLIP, FAR_CLIP));
+    m_rightPose = glm::inverse(vrMatrixToQt(m_hmd->GetEyeToHeadTransform(vr::Eye_Right)));
 
-    m_leftProjection = vrMatrixToQt(m_hmd->GetProjectionMatrix(vr::Eye_Left, NEAR_CLIP, FAR_CLIP, vr::API_OpenGL));
-    m_leftPose = vrMatrixToQt(m_hmd->GetEyeToHeadTransform(vr::Eye_Left));
+    m_leftProjection = vrMatrixToQt(m_hmd->GetProjectionMatrix(vr::Eye_Left, NEAR_CLIP, FAR_CLIP));
+    m_leftPose = glm::inverse(vrMatrixToQt(m_hmd->GetEyeToHeadTransform(vr::Eye_Left)));
 
     QString ident;
     ident.append("QVRViewer - ");
@@ -322,7 +322,7 @@ void GLWidget::updatePoses()
 
     if (m_trackedDevicePose[vr::k_unTrackedDeviceIndex_Hmd].bPoseIsValid)
     {
-        m_hmdPose = m_matrixDevicePose[vr::k_unTrackedDeviceIndex_Hmd]; //glm::translate(m_matrixDevicePose[vr::k_unTrackedDeviceIndex_Hmd], glm::vec3(0.f, 0.f, -1.7f));
+        m_hmdPose = glm::inverse(m_matrixDevicePose[vr::k_unTrackedDeviceIndex_Hmd]); //glm::translate(m_matrixDevicePose[vr::k_unTrackedDeviceIndex_Hmd], glm::vec3(0.f, 0.f, -1.7f));
     }
 }
 
@@ -379,9 +379,9 @@ glm::mat4x4 GLWidget::viewProjection(vr::Hmd_Eye eye)
     //std::cout << glm::to_string(m_hmdPose) << std::endl;
 
     if (eye == vr::Eye_Left)
-        return m_hmdPose; // * m_leftPose; //glm::translate(m_leftPose * m_hmdPose * s, glm::vec3(10.f, 10.f, 10.f));
+        return m_hmdPose * m_leftPose; //glm::translate(m_leftPose * m_hmdPose * s, glm::vec3(10.f, 10.f, 10.f));
     else
-        return  m_hmdPose; // * m_rightPose; //glm::translate(m_rightPose * m_hmdPose * s, glm::vec3(10.f, 10.f, 10.f));
+        return  m_hmdPose * m_rightPose; //glm::translate(m_rightPose * m_hmdPose * s, glm::vec3(10.f, 10.f, 10.f));
 }
 
 glm::mat4x4 GLWidget::perspectiveProjection(vr::Hmd_Eye eye) {
@@ -389,9 +389,9 @@ glm::mat4x4 GLWidget::perspectiveProjection(vr::Hmd_Eye eye) {
     //glm::scale(s, glm::vec3(10000.f, 10000.f, 10000.f));
     std::cout << glm::to_string(m_rightProjection) << std::endl;
     if (eye == vr::Eye_Left)
-        return glm::mat4x4(1.0);// m_leftProjection;
+        return m_leftProjection;
     else
-        return glm::mat4x4(1.0);//m_rightProjection;
+        return m_rightProjection;
 }
 
 QString GLWidget::getTrackedDeviceString(vr::TrackedDeviceIndex_t device, vr::TrackedDeviceProperty prop, vr::TrackedPropertyError *error)

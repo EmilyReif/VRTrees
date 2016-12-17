@@ -210,7 +210,7 @@ void VRView::paintGL()
     {
         vr::VRTextureBounds_t leftRect = { 0.0f, 0.0f, 0.5f, 1.0f };
         vr::VRTextureBounds_t rightRect = { 0.5f, 0.0f, 1.0f, 1.0f };
-        vr::Texture_t composite = { (void*)m_resolveBuffer->texture(), vr::API_OpenGL, vr::ColorSpace_Gamma };
+        vr::Texture_t composite = { (void*)m_resolveBuffer->texture(), vr::TextureType_OpenGL, vr::ColorSpace_Gamma };
 
         vr::VRCompositor()->Submit(vr::Eye_Left, &composite, &leftRect);
         vr::VRCompositor()->Submit(vr::Eye_Right, &composite, &rightRect);
@@ -278,10 +278,10 @@ void VRView::initVR()
     }
 
     // get eye matrices
-    m_rightProjection = vrMatrixToQt(m_hmd->GetProjectionMatrix(vr::Eye_Right, NEAR_CLIP, FAR_CLIP, vr::API_OpenGL));
+    m_rightProjection = vrMatrixToQt(m_hmd->GetProjectionMatrix(vr::Eye_Right, NEAR_CLIP, FAR_CLIP));
     m_rightPose = vrMatrixToQt(m_hmd->GetEyeToHeadTransform(vr::Eye_Right)).inverted();
 
-    m_leftProjection = vrMatrixToQt(m_hmd->GetProjectionMatrix(vr::Eye_Left, NEAR_CLIP, FAR_CLIP, vr::API_OpenGL));
+    m_leftProjection = vrMatrixToQt(m_hmd->GetProjectionMatrix(vr::Eye_Left, NEAR_CLIP, FAR_CLIP));
     m_leftPose = vrMatrixToQt(m_hmd->GetEyeToHeadTransform(vr::Eye_Left)).inverted();
 
     QString ident;
