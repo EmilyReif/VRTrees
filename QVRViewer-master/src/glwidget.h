@@ -27,7 +27,7 @@
 #include <QOpenGLDebugMessage>
 #include <QOpenGLDebugLogger>
 #include <QOpenGLTexture>
-#include <openvr.h>
+#include "extern/openvr/headers/openvr.h"
 
 
 class OpenGLShape;

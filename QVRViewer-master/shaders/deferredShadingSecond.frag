@@ -70,22 +70,17 @@ void main(){
     vec4 amb = vec4(0.0);
 
     // If we are on the tree, add ambient.
-    if (diffuseIntensity > 0) {
+    if (diffuseIntensity > 0.01) {
         amb = vec4(diffuseColor, 1.0) * 0.1;
         //    vec4 specAndDiffuse = (diff + spec + amb) * min(lightIntensity / attFn, 1);
         vec4 specAndDiffuse = (diff+ amb) * min(lightIntensity / attFn, 1);
-        fragColor = vec4(color * lightColor, 1.0) * specAndDiffuse;
+        fragColor = vec4(pos.y);
 
         // Add snow.
         float snow = dot(norm, normalize(vec4(0, 1.0, 0, 0)));
         snow = pow(snow + 0.2, 15);
-//        fragColor += snow ;
-
-//        // Add fog.
-//        float fogMix = pow(max((length(pos - camPos) - 3), 0) * fog.w, 0.5) - .6;
-//        fragColor = mix(fragColor, fog, fogMix);
 
     } else {
-        fragColor = fog;
+        fragColor = vec4(1.0, .2, .2, 1);
     }
 }

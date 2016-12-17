@@ -10,7 +10,7 @@
 #include <QOpenGLDebugMessage>
 #include <QOpenGLDebugLogger>
 #include <QOpenGLTexture>
-#include <openvr.h>
+#include "extern/openvr/headers/openvr.h"
 
 
 class VRView : public QOpenGLWidget, protected QOpenGLFunctions_4_1_Core

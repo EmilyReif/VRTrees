@@ -79,7 +79,8 @@ HEADERS  += src/mainwindow.h \
     src/glib/textures/Texture2D.h \
     src/glib/textures/TextureParameters.h \
     src/glib/textures/TextureParametersBuilder.h \
-    src/glib/GLDebug.h
+    src/glib/GLDebug.h \
+    extern/openvr/headers/openvr.h
 
 FORMS    += src/mainwindow.ui
 
