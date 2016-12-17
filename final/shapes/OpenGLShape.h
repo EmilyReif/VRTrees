@@ -8,7 +8,7 @@
 
 #include "gl/datatype/VBO.h"
 #include "gl/datatype/VBOAttribMarker.h"
-#include <glm/vec3.hpp>
+#include "glm/glm.hpp"
 using namespace glm;
 
 namespace CS123 { namespace GL {

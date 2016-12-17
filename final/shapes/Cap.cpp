@@ -20,9 +20,9 @@ std::vector<float> Cap::createVertsVector(int radiusTesselation, int thetaTessel
     for (int i = 0; i < radiusTesselation; i++) {
         for (int j = 0; j < (thetaTesselation + 1); j++) {
             // Top vertex position
-            verts.push_back(radiusStep * i * std::cos(-normalDirection * thetaStep*j)); // X
+            verts.push_back(radiusStep * i * glm::cos(-normalDirection * thetaStep*j)); // X
             verts.push_back(height);                                 // Y
-            verts.push_back(radiusStep * i * std::sin(-normalDirection * thetaStep*j)); // Z
+            verts.push_back(radiusStep * i * glm::sin(-normalDirection * thetaStep*j)); // Z
 
             // Top vertex normal
             verts.push_back(0); // X
@@ -30,13 +30,13 @@ std::vector<float> Cap::createVertsVector(int radiusTesselation, int thetaTessel
             verts.push_back(0); // Z
 
             // Top UV
-            verts.push_back(radiusStep * i * std::cos(-thetaStep*j) + 0.5); // U
-            verts.push_back(radiusStep * i * std::sin(-thetaStep*j) + 0.5); // V
+            verts.push_back(radiusStep * i * glm::cos(-thetaStep*j) + 0.5); // U
+            verts.push_back(radiusStep * i * glm::sin(-thetaStep*j) + 0.5); // V
 
             // Bottom vertex position
-            verts.push_back(radiusStep * (i + 1) * std::cos(-normalDirection * thetaStep*j)); // X
+            verts.push_back(radiusStep * (i + 1) * glm::cos(-normalDirection * thetaStep*j)); // X
             verts.push_back(height);                                       // Y
-            verts.push_back(radiusStep * (i + 1) * std::sin(-normalDirection * thetaStep*j)); // Z
+            verts.push_back(radiusStep * (i + 1) * glm::sin(-normalDirection * thetaStep*j)); // Z
 
             // Bottom vertex normal
             verts.push_back(0); // X
@@ -44,8 +44,8 @@ std::vector<float> Cap::createVertsVector(int radiusTesselation, int thetaTessel
             verts.push_back(0); // Z
 
             // Bottom UV
-            verts.push_back(radiusStep * (i + 1) * std::cos(-thetaStep*j) + 0.5); // U
-            verts.push_back(radiusStep * (i + 1) * std::sin(-thetaStep*j) + 0.5); // V
+            verts.push_back(radiusStep * (i + 1) * glm::cos(-thetaStep*j) + 0.5); // U
+            verts.push_back(radiusStep * (i + 1) * glm::sin(-thetaStep*j) + 0.5); // V
         }
 
 
