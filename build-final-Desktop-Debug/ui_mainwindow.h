@@ -13,13 +13,10 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
-#include <QtWidgets/QDockWidget>
-#include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
-#include <QtWidgets/QRadioButton>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -31,10 +28,6 @@ public:
     QWidget *centralWidget;
     QMenuBar *menuBar;
     QMenu *menuFile;
-    QDockWidget *dockWidget;
-    QWidget *dockWidgetContents;
-    QGroupBox *fboGroupBox;
-    QRadioButton *modeBlur;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -52,21 +45,6 @@ public:
         menuFile = new QMenu(menuBar);
         menuFile->setObjectName(QStringLiteral("menuFile"));
         MainWindow->setMenuBar(menuBar);
-        dockWidget = new QDockWidget(MainWindow);
-        dockWidget->setObjectName(QStringLiteral("dockWidget"));
-        dockWidget->setMinimumSize(QSize(100, 160));
-        dockWidgetContents = new QWidget();
-        dockWidgetContents->setObjectName(QStringLiteral("dockWidgetContents"));
-        fboGroupBox = new QGroupBox(dockWidgetContents);
-        fboGroupBox->setObjectName(QStringLiteral("fboGroupBox"));
-        fboGroupBox->setGeometry(QRect(10, 10, 160, 334));
-        fboGroupBox->setMinimumSize(QSize(0, 0));
-        modeBlur = new QRadioButton(fboGroupBox);
-        modeBlur->setObjectName(QStringLiteral("modeBlur"));
-        modeBlur->setGeometry(QRect(0, 30, 140, 22));
-        modeBlur->setChecked(false);
-        dockWidget->setWidget(dockWidgetContents);
-        MainWindow->addDockWidget(static_cast<Qt::DockWidgetArea>(1), dockWidget);
 
         menuBar->addAction(menuFile->menuAction());
         menuFile->addAction(actionQuit);
@@ -83,8 +61,6 @@ public:
         actionQuit->setText(QApplication::translate("MainWindow", "Quit", 0));
         actionQuit->setShortcut(QApplication::translate("MainWindow", "Ctrl+Q", 0));
         menuFile->setTitle(QApplication::translate("MainWindow", "File", 0));
-        fboGroupBox->setTitle(QApplication::translate("MainWindow", "FBOs", 0));
-        modeBlur->setText(QApplication::translate("MainWindow", "Blur", 0));
     } // retranslateUi
 
 };

@@ -32,7 +32,7 @@ GLWidget::GLWidget(QGLFormat format, QWidget *parent)
       m_quad(nullptr),
       m_forestMaker(nullptr),
       m_defShadingFBO(nullptr),
-      m_angleX(-0.5f), m_angleY(0.f), m_zoom(1.5f),
+      m_angleX(-1.f), m_angleY(-0.1f), m_zoom(.5f),
       m_texNoiseID(0),
       m_startTime(std::chrono::steady_clock::now())
 {

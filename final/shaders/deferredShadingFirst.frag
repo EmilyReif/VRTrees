@@ -15,11 +15,9 @@ uniform float colorID;
 
 
 void main(){
-    if ((currentBranchIndex < branchIndex)) {
-        discard;
-    }
-
-    if((currentBranchIndex == branchIndex) && (texc.y > branchPercent)){
+    if ((currentBranchIndex < branchIndex) ||
+        (currentBranchIndex == branchIndex) && (texc.y > branchPercent))
+    {
         discard;
     }
 

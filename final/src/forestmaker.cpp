@@ -22,11 +22,11 @@ ForestMaker:: ~ForestMaker()
 void ForestMaker::makeStandardForest ()
 {
     for (int i = 0; i < 4; i++) {
-        makeTree0();
-        makeTree1();
-        makeTree2();
-        makeTree3();
         makeTree4();
+        makeTree1();
+        makeTree3();
+        makeTree0();
+        makeTree2();
     }
     int numTrees = m_trees.size();
 
@@ -36,7 +36,7 @@ void ForestMaker::makeStandardForest ()
         float x = floor(random(0, 50));
         float z = floor(random(0, 50));
         vec3 trans = m_terrain.getPosition(x, z);
-        trans.y = trans.y/2 - 0.2;
+        trans.y = trans.y/2 - 0.3;
         transform = translate(transform, trans);
         float angle = random(0, 5);
         transform = glm::rotate(transform, angle, vec3(0.f,1.f,0.f));

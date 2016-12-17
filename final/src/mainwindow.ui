@@ -31,54 +31,6 @@
    </widget>
    <addaction name="menuFile"/>
   </widget>
-  <widget class="QDockWidget" name="dockWidget">
-   <property name="minimumSize">
-    <size>
-     <width>100</width>
-     <height>160</height>
-    </size>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>1</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents">
-    <widget class="QGroupBox" name="fboGroupBox">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>10</y>
-       <width>160</width>
-       <height>334</height>
-      </rect>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="title">
-      <string>FBOs</string>
-     </property>
-     <widget class="QRadioButton" name="modeBlur">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>30</y>
-        <width>140</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Blur</string>
-      </property>
-      <property name="checked">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </widget>
-   </widget>
-  </widget>
   <action name="actionQuit">
    <property name="text">
     <string>Quit</string>

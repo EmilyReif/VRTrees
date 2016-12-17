@@ -21,7 +21,7 @@ const vec3 specColor = vec3(1.0, 1.0, 1.0);
 // General scene properties (last val is dropoff).
 // Also some light properties.
 const vec4 fog =  vec4(0.4, 0.4, 0.5, 1.0);
-const vec4 sunPosWorld = vec4(-5, 1, -5, 1);
+const vec4 sunPosWorld = vec4(-5, 0.4, -5, 1);
 const vec4 sunColor = vec4(1.0, 0.9, 0.7, 0.0);
 const float lightIntensity = 1.0;
 
@@ -40,16 +40,7 @@ vec3 unpack(vec3 v) {
     }
 }
 
-float noise (vec3 point) {
-    vec3 flatNumber = floor(point);
-    vec3 frac = fract(point);
-    frac = frac*frac*(3.0 - 2.0*frac); // 3f^2 - 2f^3
-    vec2 uv = (flatNumber.xy + vec2(37.0, 17.0) * flatNumber.z) + frac.xy;
-    vec2 rg = texture(Noise, (uv + 0.5)/256.0).yx;
-    return mix(rg.x, rg.y, frac.z);
-}
-
-float noiseUV(vec2 p) {
+float generateNoise(vec2 p) {
     vec4 t = texture(Noise, p/0.25);
     t += texture(Noise, p);
     t += texture(Noise, p/6.0);
@@ -87,9 +78,6 @@ void main(){
     float diffuseComponent = clamp(dot(norm, L), 0.0, 1.0);
     vec4 camPos = inverse(view) * vec4(0.0, 0.0, 0.0, 1.0);
     vec4 eye = normalize(pos - camPos);
-//    vec4 reflection = normalize(reflect(L, norm));
-//    float specComponent = specularIntensity * pow(clamp(dot(eye, reflection), 0.0, 1.0), shininess);
-//    fragColor = vec4(1.0)*(specComponent);
 
     // Add in some light attenuation...
     float d = length(sunPosWorld - pos);
@@ -103,8 +91,13 @@ void main(){
     if (diffuseID > 0) {
 
         // Add noise
-        vec4 diffValue = vec4(mix(noiseUV(pos.xy), noiseUV(pos.yz), abs(norm.x)))/2 + 0.5;
-        vec4 diff = diffValue * diffuseComponent * min(lightIntensity / attFn, 1) * vec4(0.45 * diffuseID, 0.35, 0.26, 1.0);
+        vec4 balancedNoise = vec4(
+                                generateNoise(pos.xy)*abs(norm.z) +
+                                generateNoise(pos.xz)* abs(norm.y) +
+                                generateNoise(pos.yz)*abs(norm.x));
+
+        vec4 diffValue = vec4(0.45 * diffuseID, 0.35 * diffuseID, 0.26 * (1 - diffuseID), 1.0) * balancedNoise/2 + 0.5;
+        vec4 diff = diffValue * diffuseComponent * min(lightIntensity / attFn, 1);
 
         vec4 ambient = diffValue/3 * min(lightIntensity / attFn, 1);
         fragColor = sunColor * diff + vec4(ambColor, 1.0) * ambient;
@@ -115,7 +108,7 @@ void main(){
 //        fragColor += snow;
 
         // Add fog.
-        float fogMix = clamp(pow(max((length(pos - camPos) - 3), 0) * fog.w, 0.5) - .6 + fogTexture, 0, 1);
+        float fogMix = clamp(pow(max((length(pos - camPos) - 3), 0) * fog.w, 0.7) - .6 + fogTexture, 0, 1);
         fragColor = mix(fragColor, fog, fogMix);
 
         // Add sun.
