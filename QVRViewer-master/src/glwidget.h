@@ -51,10 +51,6 @@ signals:
 protected:
     void initializeGL();
     void paintGL();
-    void resizeGL(int w, int h);
-    void mousePressEvent(QMouseEvent *e);
-    void mouseMoveEvent(QMouseEvent *e);
-    void wheelEvent(QWheelEvent *e);
     void keyPressEvent(QKeyEvent *e);
 
 private:
@@ -68,7 +64,6 @@ private:
 
 
     void draw();
-    void rebuildMatrices();
 
     glm::mat4x4 vrMatrixToQt(const vr::HmdMatrix34_t &mat);
     glm::mat4x4 vrMatrixToQt(const vr::HmdMatrix44_t &mat);
@@ -149,8 +144,13 @@ private:
 
     glm::vec3 m_location;
 
+    std::vector<glm::mat4x4>  m_controllerLocations;
+
+    tree m_controller;
+
     // For time things.
     std::chrono::steady_clock::time_point m_startTime;
+    std::chrono::steady_clock::time_point m_buttonPressedTime;
 };
 
 #endif // GLWIDGET_H

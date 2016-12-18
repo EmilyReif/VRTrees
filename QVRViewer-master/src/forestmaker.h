@@ -22,6 +22,8 @@ public:
     std::mt19937 m_gen;
     std::uniform_real_distribution<> m_distr;
     std::uniform_real_distribution<> m_distr01;
+    tree makeTree1Solo();
+
 
 private:
     std::vector<tree> m_trees;

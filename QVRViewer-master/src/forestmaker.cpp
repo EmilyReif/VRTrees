@@ -28,7 +28,7 @@ ForestMaker:: ~ForestMaker()
 
 void ForestMaker::makeStandardForest ()
 {
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 15; i++) {
         makeTree4();
         makeTree1();
         makeTree3();
@@ -113,6 +113,30 @@ void ForestMaker::makeTree1() {
     m_trees.push_back(t);
 }
 
+// 3D tree
+tree ForestMaker::makeTree1Solo() {
+    // Initialize sphere OpenGLShape.
+    float pi = 3.1415926535;
+    float scaleRadius = 0.6;
+    float scaleHeight = 0.7;
+
+    // Array of branches that branch off from each node.
+    std::vector<branch> branches(0);
+    branches.push_back({scaleRadius, scaleHeight, 1, -1, 1, 1});
+    branches.push_back({scaleRadius, scaleHeight, 0, 1, 1, 1});
+    branches.push_back({scaleRadius, scaleHeight,  0, 1, -1, 0});
+    branches.push_back({scaleRadius, scaleHeight, 1, 1, 1, 0});
+
+    // Define the rule constants and add the rule to the dictionary
+    std::map<char, lSystemRule> rulesDict = {};
+    glm::vec3 angle(pi/2, pi/5, pi/7);
+    rulesDict['F'] = lSystemRule{angle, 0.5f, 0.08f, .50f, branches, 6};
+
+    // Set the location of the tree and add it to our forest.
+    return tree{std::make_unique<LSystemTree>(rulesDict)};
+}
+
+
 // Weird square spirals
 void ForestMaker::makeTree2() {
     // Initialize sphere OpenGLShape.
@@ -144,9 +168,9 @@ void ForestMaker::makeTree3() {
 
     // Array of branches that branch off from each node.
     std::vector<branch> branches(0);
-    branches.push_back({scaleRadius, scaleHeight, 1, 1, -1, .1});
-    branches.push_back({scaleRadius, scaleHeight, 3, 1, -1, .6});
-    branches.push_back({scaleRadius, scaleHeight*.6f, -1, 1, -1, .7});
+    branches.push_back({scaleRadius, scaleHeight, 1, 1, -1, .1f});
+    branches.push_back({scaleRadius, scaleHeight, 3, 1, -1, .6f});
+    branches.push_back({scaleRadius, scaleHeight*.6f, -1, 1, -1, .7f});
     branches.push_back({scaleRadius, scaleHeight*.4f, -3, 1, -1, 1});
 
 

@@ -51,7 +51,9 @@ GLWidget::GLWidget(QGLFormat format, QWidget *parent)
       m_justNormals(false),
       m_justPos(false),
       m_fogDist(1.4),
-      m_location(glm::vec3(2.f, 1.f, 1.5f))
+      m_location(glm::vec3(2.f, 1.f, 1.5f)),
+      m_controllerLocations(std::vector<glm::mat4x4>()),
+      m_buttonPressedTime(std::chrono::steady_clock::now())
 
 {
     setFocusPolicy(Qt::StrongFocus);
@@ -76,6 +78,7 @@ void GLWidget::initializeGL() {
 
     m_quad = std::make_unique<Square>();
     m_forestMaker = std::make_unique<ForestMaker>();
+    m_controller = m_forestMaker->makeTree1Solo();
 
     // Initialize textures.
     QImage image(":/images/noiseSmall.png");
@@ -97,6 +100,15 @@ void GLWidget::initializeGL() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glBindTexture(GL_TEXTURE_2D, 0);
     initVR();
+
+    m_defShadingFBO = std::make_unique<FBO>(
+                2,
+                FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY,
+                m_eyeWidth, m_eyeHeight,
+                TextureParameters::WRAP_METHOD::REPEAT,
+                TextureParameters::FILTER_METHOD::LINEAR,
+                GL_FLOAT);
+
     m_startTime = std::chrono::steady_clock::now();
 }
 
@@ -144,14 +156,14 @@ void GLWidget::draw() {
     }
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glViewport(0, 0, width(), height());
+    glViewport(0, 0, m_eyeWidth, m_eyeHeight);
     glDisable(GL_MULTISAMPLE);
     renderEye(vr::Eye_Right, true);
 
     if (m_hmd)
     {
-        vr::VRTextureBounds_t leftRect = { 0.0f, 0.5f, 0.5f, 1.0f };
-        vr::VRTextureBounds_t rightRect = { 0.5f, 0.5f, 1.0f, 1.0f };
+        vr::VRTextureBounds_t leftRect = { 0.0f, 0.0f, 0.5f, 1.0f };
+        vr::VRTextureBounds_t rightRect = { 0.5f, 0.0f, 1.0f, 1.0f };
         vr::Texture_t composite = { (void*)m_resolveBuffer->texture(), vr::TextureType_OpenGL, vr::ColorSpace_Gamma };
 
         vr::VRCompositor()->Submit(vr::Eye_Left, &composite, &leftRect);
@@ -180,20 +192,24 @@ void GLWidget::renderEye(vr::Hmd_Eye eye, bool screen)
     glUniform1f(glGetUniformLocation(m_phongProgram, "percent"), m_branchPercent);
 
     std::vector<tree> trees = m_forestMaker->getTrees();
-    {
-        int numTrees = trees.size();
-        for (int i = 0; i < numTrees; i++) {
-            loc = trees[i].modelMatrix;
-            glUniform1f(glGetUniformLocation(m_phongProgram, "colorID"),  trees[i].colorID);
-            glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, glm::value_ptr(loc));
-            trees[i].treeShape->draw();
-        }
-        loc = glm::mat4x4();
-        loc = glm::scale(loc, glm::vec3(1, 0.5, 1));
-        glUniform1f(glGetUniformLocation(m_phongProgram, "colorID"),  1);
+    int numTrees = trees.size();
+    for (int i = 0; i < numTrees; i++) {
+        loc = trees[i].modelMatrix;
+        glUniform1f(glGetUniformLocation(m_phongProgram, "colorID"),  trees[i].colorID);
         glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, glm::value_ptr(loc));
-        m_forestMaker->drawTerrain();
+        trees[i].treeShape->draw();
     }
+    loc = glm::mat4x4();
+    loc = glm::scale(loc, glm::vec3(1, 0.5, 1));
+    glUniform1f(glGetUniformLocation(m_phongProgram, "colorID"),  1);
+    glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, glm::value_ptr(loc));
+    m_forestMaker->drawTerrain();
+//    for (int i = 0; i < m_controllerLocations.size(); i++) {
+//        glm::mat4x4 mat = m_controllerLocations[i];
+//        mat = glm::transpose(viewProjection(eye)) * mat;
+//        glUniformMatrix4fv(glGetUniformLocation(m_phongProgram, "model"),  1, GL_FALSE, glm::value_ptr(mat));
+//        m_controller.treeShape->draw();
+//    }
     m_defShadingFBO->unbind();
 
     // Bind the VR buffer
@@ -240,35 +256,6 @@ void GLWidget::renderEye(vr::Hmd_Eye eye, bool screen)
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-// This is called at the beginning of the program between initializeGL and
-// the first paintGL call, as well as every time the window is resized.
-void GLWidget::resizeGL(int w, int h) {
-    m_width = w;
-    m_height = h;
-
-    // TODO: [Task 5] Initialize FBOs here, with dimensions m_width and m_height.
-    m_defShadingFBO = std::make_unique<FBO>(
-                2,
-                FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY,
-                m_width, m_height,
-                TextureParameters::WRAP_METHOD::REPEAT,
-                TextureParameters::FILTER_METHOD::LINEAR,
-                GL_FLOAT);
-    rebuildMatrices();
-}
-
-/// Mouse interaction code below.
-void GLWidget::mousePressEvent(QMouseEvent *event) {
-    m_prevMousePos = event->pos();
-}
-
-void GLWidget::mouseMoveEvent(QMouseEvent *event) {
-    m_angleX += 3.f * (event->x() - m_prevMousePos.x()) / (float) m_width;
-    m_angleY += 3.f * (event->y() - m_prevMousePos.y()) / (float) m_height;
-    m_prevMousePos = event->pos();
-    rebuildMatrices();
-}
-
 void GLWidget::keyPressEvent(QKeyEvent *event) {
     switch (event->key()) {
     case Qt::Key_F:
@@ -299,19 +286,6 @@ void GLWidget::keyPressEvent(QKeyEvent *event) {
 
 }
 
-void GLWidget::wheelEvent(QWheelEvent *event) {
-    m_zoom -= event->delta() / 100.f;
-    rebuildMatrices();
-}
-
-void GLWidget::rebuildMatrices() {
-    m_view = glm::translate(glm::vec3(0.f, -1.f, -m_zoom)) *
-             glm::rotate(m_angleY, glm::vec3(1.f,0.f,0.f)) *
-             glm::rotate(m_angleX, glm::vec3(0.f,1.f,0.f));
-
-    m_projection = glm::perspective(35.0f, (float)m_width/m_height, 0.1f, 100000000.f);
-    update();
-}
 
 void GLWidget::initVR() {
     vr::EVRInitError error = vr::VRInitError_None;
@@ -367,19 +341,27 @@ void GLWidget::initVR() {
 void GLWidget::updatePoses()
 {
     vr::VRCompositor()->WaitGetPoses(m_trackedDevicePose, vr::k_unMaxTrackedDeviceCount, NULL, 0);
-
+    m_controllerLocations.clear();
     for (unsigned int i=0; i<vr::k_unMaxTrackedDeviceCount; i++)
     {
         if (m_trackedDevicePose[i].bPoseIsValid)
         {
             m_matrixDevicePose[i] =  vrMatrixToQt(m_trackedDevicePose[i].mDeviceToAbsoluteTracking);
+            if (i == vr::k_unTrackedDeviceIndex_Hmd) {
+                if (m_trackedDevicePose[vr::k_unTrackedDeviceIndex_Hmd].bPoseIsValid)
+                {
+                    m_hmdPose = glm::inverse(m_matrixDevicePose[vr::k_unTrackedDeviceIndex_Hmd]); //glm::translate(m_matrixDevicePose[vr::k_unTrackedDeviceIndex_Hmd], glm::vec3(0.f, 0.f, -1.7f));
+                }
+            } else if (m_hmd->GetTrackedDeviceClass(i) ==  vr::TrackedDeviceClass_Controller){
+                if (m_trackedDevicePose[i].bPoseIsValid) {
+                    m_controllerLocations.push_back(glm::transpose(vrMatrixToQt(m_trackedDevicePose[i].mDeviceToAbsoluteTracking)));
+                }
+            }
         }
     }
 
-    if (m_trackedDevicePose[vr::k_unTrackedDeviceIndex_Hmd].bPoseIsValid)
-    {
-        m_hmdPose = glm::inverse(m_matrixDevicePose[vr::k_unTrackedDeviceIndex_Hmd]); //glm::translate(m_matrixDevicePose[vr::k_unTrackedDeviceIndex_Hmd], glm::vec3(0.f, 0.f, -1.7f));
-    }
+
+
 }
 
 void GLWidget::updateInput()
@@ -395,13 +377,20 @@ void GLWidget::updateInput()
         vr::VRControllerState_t state;
         if(m_hmd->GetControllerState(i, &state, sizeof(state)))
         {
-            if (state.ulButtonPressed & vr::ButtonMaskFromId(vr::k_EButton_SteamVR_Touchpad))
+            if (state.ulButtonTouched & vr::ButtonMaskFromId(vr::k_EButton_SteamVR_Touchpad))
             {
             }
 
 
-            if (state.ulButtonPressed & vr::ButtonMaskFromId(vr::k_EButton_Grip))
+            if (state.ulButtonTouched & vr::ButtonMaskFromId(vr::k_EButton_Grip))
             {
+                std::chrono::steady_clock::time_point currTime = std::chrono::steady_clock::now();
+
+                std::chrono::milliseconds time_span = std::chrono::duration_cast<std::chrono::milliseconds>(currTime - m_buttonPressedTime);
+                if (time_span.count() > 250) {
+                    m_location += glm::mat3x3(m_hmdPose) * glm::vec3(0.0, 0.0, 0.5);
+                    m_buttonPressedTime = std::chrono::steady_clock::now();
+                }
             }
         }
     }
