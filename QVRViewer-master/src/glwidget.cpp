@@ -46,7 +46,12 @@ GLWidget::GLWidget(QGLFormat format, QWidget *parent)
       m_currBranch(0),
       m_branchPercent(0),
       m_animateBranches(true),
-      m_drawFog(true)
+      m_drawFog(true),
+      m_drawSnow(false),
+      m_justNormals(false),
+      m_justPos(false),
+      m_fogDist(1.4),
+      m_location(glm::vec3(2.f, 1.f, 1.5f))
 
 {
     setFocusPolicy(Qt::StrongFocus);
@@ -164,7 +169,7 @@ void GLWidget::renderEye(vr::Hmd_Eye eye, bool screen)
     glUseProgram(m_phongProgram);
     m_defShadingFBO->bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glActiveTexture(GL_TEXTURE0);
+    //glActiveTexture(GL_TEXTURE0);
 
     glm::mat4x4 loc = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
 
@@ -205,6 +210,10 @@ void GLWidget::renderEye(vr::Hmd_Eye eye, bool screen)
     glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "PosAndSpec"), 1);
     glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "Noise"), 2);
     glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "DrawFog"), m_drawFog);
+    glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "DrawSnow"), m_drawSnow);
+    glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "JustNormal"), m_justNormals);
+    glUniform1i(glGetUniformLocation(m_deferredSecondProgram, "JustPos"), m_justPos);
+    glUniform1f(glGetUniformLocation(m_deferredSecondProgram, "FogDist"), m_fogDist);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glActiveTexture(GL_TEXTURE0);
@@ -266,8 +275,26 @@ void GLWidget::keyPressEvent(QKeyEvent *event) {
         m_drawFog = !m_drawFog;
         break;
     case Qt::Key_T:
-        m_animateBranches = !m_animateBranches;
+        m_animateBranches = true;
+        m_startTime = std::chrono::steady_clock::now();
         break;
+    case Qt::Key_N:
+        m_justNormals = !m_justNormals;
+        break;
+    case Qt::Key_P:
+        m_justPos = !m_justPos;
+        break;
+    case Qt::Key_S:
+        m_drawSnow = !m_drawSnow;
+        break;
+    case Qt::Key_Comma:
+        m_fogDist = glm::clamp(m_fogDist - 0.2, 1.4, 4.4);
+        break;
+    case Qt::Key_Period:
+        m_fogDist = glm::clamp(m_fogDist + 0.2, 1.4, 4.4);
+        break;
+    case Qt::Key_Space:
+        m_location += glm::mat3x3(m_hmdPose) * glm::vec3(0.0, 0.0, 0.5);
     }
 
 }
@@ -407,13 +434,13 @@ glm::mat4x4 GLWidget::viewProjection(vr::Hmd_Eye eye)
     if (eye == vr::Eye_Left)
     {
         glm::mat4x4 viewProjection = glm::transpose(m_hmdPose * m_leftPose);
-        return glm::translate(viewProjection, glm::vec3(2.f, 1.f, 1.f));
+        return glm::translate(viewProjection, m_location);
     }
         //return m_hmdPose * m_leftPose; //glm::translate(m_leftPose * m_hmdPose * s, glm::vec3(10.f, 10.f, 10.f));
     else
     {
         glm::mat4x4 viewProjection = glm::transpose(m_hmdPose * m_rightPose);
-        return glm::translate(viewProjection, glm::vec3(2.f, 1.f, 1.f));
+        return glm::translate(viewProjection, m_location);
     }
 //        return  m_hmdPose * m_rightPose; //glm::translate(m_rightPose * m_hmdPose * s, glm::vec3(10.f, 10.f, 10.f));
 }

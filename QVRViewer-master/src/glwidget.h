@@ -142,6 +142,12 @@ private:
     bool m_animateBranches;
 
     bool m_drawFog;
+    bool m_drawSnow;
+    bool m_justNormals;
+    bool m_justPos;
+    float m_fogDist;
+
+    glm::vec3 m_location;
 
     // For time things.
     std::chrono::steady_clock::time_point m_startTime;

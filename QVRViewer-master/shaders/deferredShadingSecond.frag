@@ -27,6 +27,10 @@ uniform sampler2D NormalAndDiffuse;
 uniform sampler2D PosAndSpec;
 uniform sampler2D Noise;
 uniform bool DrawFog;
+uniform bool JustNormal;
+uniform bool JustPos;
+uniform bool DrawSnow;
+uniform float FogDist;
 
 out vec4 fragColor;
 
@@ -47,6 +51,16 @@ float generateNoise(vec2 p) {
 }
 
 void main(){
+
+    if (JustNormal) {
+        fragColor = texture(NormalAndDiffuse, uv);
+        return;
+    }
+
+    if (JustPos) {
+        fragColor = texture(PosAndSpec, uv);
+        return;
+    }
 
     // Aspect Ratio.
     float aspect = projection[0][0]/projection[1][1];
@@ -96,19 +110,41 @@ void main(){
 
         vec4 diffValue = vec4(0.45 * diffuseID, 0.35 * diffuseID, 0.26 * (1 - diffuseID), 1.0) * balancedNoise/2 + 0.5;
         vec4 diff = diffValue * diffuseComponent * min(lightIntensity / attFn, 1);
+        if (DrawSnow) {
+            vec4 snowColor = vec4(1.0, 1.0, 1.0, 1.0);
+            float snow = dot(norm, normalize(vec4(0, 1.0, 0, 0)));
+            snow = clamp(pow(snow + 0.2, 15), 0, 1.0);
+            diffValue = clamp(diff + 0.2, 0.0, 1.0);
+            diffValue = mix(diffValue, snowColor, snow);
+            diff = diffValue * diffuseComponent;
+
+        }
+
+//        // Normal (spring/summer)
+//               vec4 diffValue = vec4(0.65 * (diffuseID), 0.5 * (diffuseID), 0.1* (1 - diffuseID), 1.0) * balancedNoise/2 + 0.5;
+
+//               // Fall
+//               diffValue = vec4(0.45 * (diffuseID), .3* (diffuseID), 0, 1)* balancedNoise/2 + 0.2;
+//               if (diffuseID == 1) {
+//                   diffValue = vec4(0.6, .2, 0, 1)* balancedNoise/2 + 0.5;
+//               }
+
+//               // Winter
+//               diffValue = vec4(0.2, 0.2, diffuseID * 0.3, 1)* balancedNoise/2;
+
+
+
 
         vec4 ambient = diffValue/3 * min(lightIntensity / attFn, 1);
         fragColor = sunColor * diff + vec4(ambColor, 1.0) * ambient;
 
         // Add snow.
-        float snow = dot(norm, normalize(vec4(0, 1.0, 0, 0)));
-        snow = clamp(pow(snow + 0.2, 15), 0, 1);
-//        fragColor += snow;
+
 
         // Add fog.
 //        float fogMix = clamp(pow(max((length(pos - camPos) - 3), 0) * fog.w, 0.5) - .6 + fogTexture, 0, 1);
         if (DrawFog) {
-            float fogMix = clamp(pow(max((length(pos - camPos)), 0) * fog.w, 1) - .6 + fogTexture, 0, 1);
+            float fogMix = clamp(pow(max((length(pos - camPos) - (8 - FogDist*2)), 0) * fog.w, 0.7) - .6, 0, 1);
             fragColor = mix(fragColor, fog, fogMix);
         }
 

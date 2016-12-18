@@ -5,7 +5,7 @@
 #include "shapes/lsystemtree.h"
 #include "shapes/OpenGLShape.h"
 #include "terrain/terrain.h"
-
+#include <random>
 struct tree {
     std::shared_ptr<OpenGLShape> treeShape;
     glm::mat4 modelMatrix;
@@ -19,6 +19,9 @@ public:
     ~ForestMaker();
     std::vector<tree> getTrees();
     void drawTerrain();
+    std::mt19937 m_gen;
+    std::uniform_real_distribution<> m_distr;
+    std::uniform_real_distribution<> m_distr01;
 
 private:
     std::vector<tree> m_trees;
